@@ -3,13 +3,7 @@ module HtmlToElm.Util (..) where
 --------------------------------------------------------------------------------
 -- EXTERNAL DEPENDENCIES
 --------------------------------------------------------------------------------
-import Dict exposing (Dict)
-import String
-import ElmTest.Test exposing (test, suite)
-import ElmTest.Assertion exposing (assert, assertEqual)
-import ElmTest.Runner.Element exposing (runDisplay)
-import Debug exposing (log)
-import Maybe exposing (Maybe)
+import ElmTest exposing (..)
 
 
 --------------------------------------------------------------------------------
@@ -51,4 +45,4 @@ tests = suite "HtmlToElm.elm"
     ]
 
 main =
-    runDisplay tests
+    elementRunner tests

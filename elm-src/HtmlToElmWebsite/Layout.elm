@@ -36,7 +36,6 @@ panelContent (_, windowHeight) =
         [("height", (toString height) ++ "px")]
 
 
-
 leftPanel windowDimensions =
     mainPanel windowDimensions ++ [("left", "0px")]
 

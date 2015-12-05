@@ -1,6 +1,5 @@
 module Main where
 
--- import StartApp.Simple as StartApp
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -14,9 +13,11 @@ import HtmlToElm.HtmlToElm exposing (htmlToElm)
 
 type alias StringAddress = Signal.Address String
 
+
 currHtmlMailbox : Signal.Mailbox String
 currHtmlMailbox =
   Signal.mailbox ""
+
 
 topBar : Html
 topBar =
@@ -50,6 +51,7 @@ topBar =
             ]
         ]
 
+
 snippetButton : String -> Signal.Address Action -> Html
 snippetButton snippetName address =
     span
@@ -57,6 +59,7 @@ snippetButton snippetName address =
         , onClick address (LoadSnippet snippetName)
         ]
         [ text snippetName ]
+
 
 snippetButtons : Signal.Address Action -> List Html
 snippetButtons address =
@@ -90,6 +93,7 @@ leftPanel windowDimensions address =
             ([ text "snippets: " ]  ++  snippetButtons address)
         ]
 
+
 copyButton : Bool -> Html
 copyButton visible =
     let
@@ -98,6 +102,7 @@ copyButton visible =
         div
           [ id "copy-button",  style style', class "copy-button" ]
           [ text "copy"]
+
 
 rightPanel : ( Int, Int ) -> Model -> Signal.Address Action -> Html
 rightPanel windowDimensions model address =
@@ -152,18 +157,20 @@ rightPanel windowDimensions model address =
             , copyButton True
             ]
 
-
-
 type Action =
     LoadSnippet String
     | SetIndentSpaces Int
     | HtmlUpdated String
 
+
 actionsMailbox : Signal.Mailbox (Maybe Action)
 actionsMailbox = Signal.mailbox Nothing
+
+
 actionsAddress : Signal.Address Action
 actionsAddress =
   Signal.forwardTo actionsMailbox.address Just
+
 
 updateFunc : Maybe Action -> Model   ->   Model
 updateFunc maybeAction model =
@@ -189,12 +196,14 @@ updateFunc maybeAction model =
         Nothing ->
             Debug.crash "This should never happen."
 
+
 type alias Model =
     { html : String
     , elmCode: Maybe String
     , indentSpaces : Int
     , currentSnippet : String
     }
+
 
 initialModel : Model
 initialModel =
@@ -204,9 +213,11 @@ initialModel =
     , currentSnippet = ""
     }
 
+
 actionsModelSignal : Signal Model
 actionsModelSignal =
     Signal.foldp updateFunc initialModel actionsMailbox.signal
+
 
 modelSignal : Signal Model
 modelSignal =
@@ -220,14 +231,6 @@ modelSignal =
                 }
     in
         Signal.map2 reducer actionsModelSignal incomingHtmlCodeSignal
--- foldp : (a -> state -> state) -> state -> Signal a
---         -> Signal state
---
-
--- fold p returns a signal
-
-
--- foldp update model?? modelSignal
 
 
 main : Signal Html
@@ -245,17 +248,9 @@ view actionAddress model windowDimensions =
         ]
     ]
 
--- how do I merge incomingHtmlCode into modelSignal?
------ how about merge state and incomingHtmlCode,
-
--- another tricky one is that when you click the button, you need
--- to update codemirror, so the js needs to be listening on a port for currHtml
---  but we don't want to get into an infinite loop!
--- how about we tackle indent spaces first?? (it will look pretty cool)
 
 port incomingHtmlCodeSignal : Signal (String)
 
--- elmCode = Signal.map (htmlToElm 4) incomingHtmlCodeSignal
 port outgoingElmCode : Signal (Maybe String)
 port outgoingElmCode = Signal.map .elmCode modelSignal
 

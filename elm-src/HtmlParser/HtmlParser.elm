@@ -1,9 +1,10 @@
-module HtmlParser.HtmlParser (
-        parseHtml,
-        Node(Element, Text),
-        main,
-        tests
+module HtmlParser.HtmlParser
+    ( parseHtml
+    , Node(Element, Text)
+    , main
+    , tests
     ) where
+
 
 --------------------------------------------------------------------------------
 -- EXTERNAL DEPENDENCIES
@@ -12,26 +13,32 @@ import Dict exposing (Dict)
 import ElmTest exposing (..)
 import Maybe exposing (Maybe)
 
+
 --------------------------------------------------------------------------------
 -- INTERNAL DEPENDENCIES
 --------------------------------------------------------------------------------
 
 import HtmlParser.HtmlParserRawAst exposing (xhtmlToRawAst)
-import Parser.Parser exposing (
-        ParseResult(ParseMatchesReturnsResult, ParseMatchesReturnsNothing, ParseDoesNotMatch),
-        AstNode(LabelledAstNode, UnlabelledAstNode),
-        AstNodeValue(AstLeaf, AstChildren)
+import Parser.Parser exposing
+    ( ParseResult
+        ( ParseMatchesReturnsResult
+        , ParseMatchesReturnsNothing
+        , ParseDoesNotMatch
+        )
+    , AstNode(LabelledAstNode, UnlabelledAstNode)
+    , AstNodeValue(AstLeaf, AstChildren)
     )
-import Parser.ParserHelpers exposing (
-        concatLeafs,
-        listToPair,
-        unpackStringFromNode,
-        unpackListFromNode,
-        unpackStringsFromNode,
-        getLabel,
-        unsafeHead,
-        unsafeTail
+import Parser.ParserHelpers exposing
+    ( concatLeafs
+    , listToPair
+    , unpackStringFromNode
+    , unpackListFromNode
+    , unpackStringsFromNode
+    , getLabel
+    , unsafeHead
+    , unsafeTail
     )
+
 
 --------------------------------------------------------------------------------
 -- TYPES
@@ -76,13 +83,13 @@ voidElements =
     ]
 
 
--- List.member "br" voidElements
-
 convertTextNode : AstNode -> Node
 convertTextNode astNode = Text <| concatLeafs astNode
 
+
 convertAttributeValue : AstNode -> Node
 convertAttributeValue astNode = Text <| concatLeafs astNode
+
 
 attributeToTuple : AstNode -> (String, String)
 attributeToTuple astNode =
@@ -95,6 +102,7 @@ attributeToTuple astNode =
             listToPair (strings ++ [""])
         else
             listToPair strings
+
 
 attributesToDict : AstNode -> Dict String String
 attributesToDict astNode =
@@ -117,13 +125,14 @@ convertOpeningTag astNode =
         (tagNameNode, attributesNode) = listToPair <| unpackListFromNode astNode
     in
         Element
-            {
-                tagName = unpackStringFromNode tagNameNode,
-                attributes = attributesToDict attributesNode,
-                children =  []
+            { tagName = unpackStringFromNode tagNameNode
+            , attributes = attributesToDict attributesNode
+            , children =  []
             }
 
+
 convertSelfClosingTag = convertOpeningTag  -- it's the same thing!
+
 
 appendNode : Node -> Node   ->   Node
 appendNode node childNode =
@@ -131,6 +140,7 @@ appendNode node childNode =
         Element e ->
             Element { e | children = e.children ++ [childNode] }
         _ -> node  -- don't alter it
+
 
 astNodeTypeLookup : Dict String AstNodeType
 astNodeTypeLookup =
@@ -141,6 +151,7 @@ astNodeTypeLookup =
         , ("SELF_CLOSING_TAG", SelfClosingTagAstNode)
         ]
 
+
 getAstNodeType : AstNode -> AstNodeType
 getAstNodeType astNode =
     let
@@ -148,18 +159,19 @@ getAstNodeType astNode =
     in
         case (Dict.get label astNodeTypeLookup) of
             Just nodeType ->
-                case (Debug.log "nodeType" nodeType) of
+                case nodeType of
                     OpeningTagAstNode ->
                         if
                             List.member (getTagName astNode) voidElements
                         then
-                            (Debug.log "Found SelfClosing" SelfClosingTagAstNode)
+                            SelfClosingTagAstNode
                         else
-                            (Debug.log "found opening" OpeningTagAstNode)
+                            OpeningTagAstNode
                     _ ->
                         nodeType
             Nothing ->
                 Debug.crash("")
+
 
 flatAstToTree : AstNode -> List AstNode   ->   (Node, List AstNode)
 flatAstToTree openingTagAstNode astNodes =
@@ -183,7 +195,7 @@ flatAstToTree openingTagAstNode astNodes =
                                 flatAstToTree' newNode tailAstNodes
                         OpeningTagAstNode ->
                             let
-                                (elementNode, remainderAstNodes') = flatAstToTree currAstNode tailAstNodes -- todo, this must return remainderTokens!
+                                (elementNode, remainderAstNodes') = flatAstToTree currAstNode tailAstNodes
                                 newNode = appendNode currNode elementNode
                             in
                                 flatAstToTree' newNode remainderAstNodes'
@@ -202,6 +214,7 @@ flatAstToTree openingTagAstNode astNodes =
         result = flatAstToTree' initialNode astNodes
     in
         result
+
 
 astNodeToHtmlNode : AstNode -> Maybe Node
 astNodeToHtmlNode astNode =
@@ -234,6 +247,7 @@ parseHtml s =
             ParseMatchesReturnsResult astNode ->
                 astNodeToHtmlNode astNode
             _ -> Debug.crash("")
+
 
 
 --------------------------------------------------------------------------------

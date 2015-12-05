@@ -14080,7 +14080,7 @@ Elm.HtmlParser.HtmlParser.make = function (_elm) {
             return _p0._0;
          } else {
             return _U.crashCase("HtmlParser.HtmlParser",
-            {start: {line: 315,column: 5},end: {line: 317,column: 29}},
+            {start: {line: 329,column: 5},end: {line: 331,column: 29}},
             _p0)("");
          }
    };
@@ -14090,7 +14090,7 @@ Elm.HtmlParser.HtmlParser.make = function (_elm) {
             return _p2._0;
          } else {
             return _U.crashCase("HtmlParser.HtmlParser",
-            {start: {line: 309,column: 5},end: {line: 311,column: 29}},
+            {start: {line: 323,column: 5},end: {line: 325,column: 29}},
             _p2)("");
          }
    };
@@ -14164,21 +14164,17 @@ Elm.HtmlParser.HtmlParser.make = function (_elm) {
       var _p5 = A2($Dict.get,label,astNodeTypeLookup);
       if (_p5.ctor === "Just") {
             var _p7 = _p5._0;
-            var _p6 = A2($Debug.log,"nodeType",_p7);
+            var _p6 = _p7;
             if (_p6.ctor === "OpeningTagAstNode") {
                   return A2($List.member,
                   getTagName(astNode),
-                  voidElements) ? A2($Debug.log,
-                  "Found SelfClosing",
-                  SelfClosingTagAstNode) : A2($Debug.log,
-                  "found opening",
-                  OpeningTagAstNode);
+                  voidElements) ? SelfClosingTagAstNode : OpeningTagAstNode;
                } else {
                   return _p7;
                }
          } else {
             return _U.crashCase("HtmlParser.HtmlParser",
-            {start: {line: 149,column: 9},end: {line: 162,column: 32}},
+            {start: {line: 160,column: 9},end: {line: 173,column: 32}},
             _p5)("");
          }
    };
@@ -14286,7 +14282,7 @@ Elm.HtmlParser.HtmlParser.make = function (_elm) {
          case "ParseMatchesReturnsResult":
          return astNodeToHtmlNode(_p21._0);
          default: return _U.crashCase("HtmlParser.HtmlParser",
-           {start: {line: 231,column: 9},end: {line: 236,column: 33}},
+           {start: {line: 244,column: 9},end: {line: 249,column: 33}},
            _p21)("");}
    };
    var tests = A2($ElmTest.suite,

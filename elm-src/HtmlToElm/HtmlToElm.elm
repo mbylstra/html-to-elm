@@ -1,5 +1,6 @@
 module HtmlToElm.HtmlToElm (..) where
 
+
 --------------------------------------------------------------------------------
 -- EXTERNAL DEPENDENCIES
 --------------------------------------------------------------------------------
@@ -9,13 +10,14 @@ import ElmTest exposing (..)
 import Maybe exposing (Maybe)
 import Regex exposing (regex)
 
+
 --------------------------------------------------------------------------------
 -- INTERNAL DEPENDENCIES
 --------------------------------------------------------------------------------
 
-import HtmlParser.HtmlParser exposing (
-        parseHtml,
-        Node(Element, Text)
+import HtmlParser.HtmlParser exposing
+    ( parseHtml
+    , Node(Element, Text)
     )
 import HtmlToElm.ElmHtmlWhitelists exposing (..)
 
@@ -33,7 +35,6 @@ type alias IndentFunction = Int -> Int -> String   ->   String
 -- MAIN
 --------------------------------------------------------------------------------
 
-
 renderAttribute : (String, String) -> String
 renderAttribute (key, value) =
     if
@@ -50,6 +51,7 @@ renderAttribute (key, value) =
             "attribute \"" ++ key ++ "\""  ++ " \"" ++ value ++ "\""
 -- TODO: look this app in the attributes whitelist
 
+
 indent : IndentFunction
 indent spacesPerIndent indentLevel s =
     let
@@ -57,6 +59,7 @@ indent spacesPerIndent indentLevel s =
         listOfSpaces = List.repeat spaces " "
     in
         (String.join "" listOfSpaces) ++ s
+
 
 renderAttributes : Dict String String   ->   String
 renderAttributes attributes =
@@ -77,17 +80,6 @@ renderTextNode node =
             "text \"" ++ (removeNewlines text) ++ "\""
         _ ->
             Debug.crash("")
-
--- renderLeafElement : Node -> String
--- renderLeafElement node =
---     case node of
---         Element {tagName, attributes, children} ->
---             let
---                 childText = case children of
---                     [] -> "[]"
---                     textNode::_ -> "[" ++ renderTextNode textNode ++ "]"
---             in
---                 String.join " " [tagName, renderAttributes attributes, childText]
 
 
 renderTagFunctionHead : String -> String
@@ -124,8 +116,6 @@ renderVerticalChild node =
         Text s ->
             IndentTreeLeaf <| renderTextNode node
 
--- -- "concat union" function?
--- concatUnion
 
 verticallyRenderChildren : List Node -> IndentTree
 verticallyRenderChildren nodes =
@@ -134,16 +124,7 @@ verticallyRenderChildren nodes =
 
 renderNode : Node -> IndentTree
 renderNode node =
-    -- case node of
-    --     Element node ->
-    --         renderVerticalChild node
-    --         verticallyRenderChildren children
-    --     Text s ->
-    --         IndentTreeLeaf s
     renderVerticalChild node
-    -- case node of
-    --     Text s -> IndentTreeLeaf renderTextNode
-    --     Element e -> renderVerticalChild
 
 
 indentTreeStrings : Int -> IndentTree   ->   IndentTree
@@ -180,7 +161,6 @@ htmlNodeToElm spacesPerIndent node =
         <| flattenIndentTree
         <| indentTreeStrings spacesPerIndent
         <| renderNode node
-
 
 
 removeNewlines : String -> String
@@ -246,83 +226,6 @@ htmlToElm spacesPerIndent s =
 
 
 
--- we need a function to traverse the tree and indent every string depending on depth
--- then you flatten the tree, then join by newline
-
--- renderTailElementWithChildren node indentLevel =
---     case node of
---         Element {tagName, attributes, children} ->
---             let
---                 firstLine = indent indentLevel (", " ++ tagName)
---                 nextIndentLevel = indentLevel + 1
---                 renderedAttributes = indent nextIndentLevel (renderAttributes attributes)
---                 children = indent nextIndentLevel "[]"
---             in
---                 String.join "\n" [firstLine, renderedAttributes, children]
-
-
--- Example:
--- view : Address Action -> Model -> Html
--- view address model =
---   div [class "login-wrapper"][
---     div [class "panel panel-default center-block", style [("max-width", "500px")]][
---       div [class "panel-heading"][
---         h2 [class "panel-title"] [text "please login"]
---       ]
---       , div [class "panel-body"][
---         Html.form [class "form-horizontal col-md-12", action "/api/login", method "POST"][
---           div [class "form-group row"][
---             label [class "col-sm-2 control-label"] [text "Mail"]
---             , div [class "col-sm-10"] [
---               input [class "form-control", name "email", value ""][]
---             ]
---           ]
---           , div [class "form-group row"] [
---             label [class "col-sm-2 control-label"][text "Password"]
---             , div [class "col-sm-10"][
---               input [class "form-control", type' "password", name "password", value ""][]
---             ]
---           ]
---           , div [class "text-center"][
---             input [class "login-submit btn btn-primary", type' "submit", value "submit"][]
---           ]
---         ]
---       ]
---     ]
---   ]
-
--- todoItem address todo =
---     li
---       [ classList [ ("completed", todo.completed), ("editing", todo.editing) ] ]
---       [ div
---           [ class "view" ]
---           [ input
---               [ class "toggle"
---               , type' "checkbox"
---               , checked todo.completed
---               , onClick address (Check todo.id (not todo.completed))
---               ]
---               []
---           , label
---               [ onDoubleClick address (EditingTask todo.id True) ]
---               [ text todo.description ]
---           , button
---               [ class "destroy"
---               , onClick address (Delete todo.id)
---               ]
---               []
---           ]
---       , input
---           [ class "edit"
---           , value todo.description
---           , name "title"
---           , id ("todo-" ++ toString todo.id)
---           , on "input" targetValue (Signal.message address << UpdateTask todo.id)
---           , onBlur address (EditingTask todo.id False)
---           , onEnter address (EditingTask todo.id False)
---           ]
---           []
---       ]
 --------------------------------------------------------------------------------
 -- TESTS
 --------------------------------------------------------------------------------
@@ -380,18 +283,6 @@ tests = suite "HtmlToElm.elm"
                 (renderTextNode <| Text "hello")
         )
         ,
-        -- test "renderLeafElement" (
-        --     assertEqual
-        --         "div [class \"success\", id \"1\"] []"
-        --         (renderLeafElement testLeafElement)
-        -- )
-        -- ,
-        -- test "renderLeafElement" (
-        --     assertEqual
-        --         "div [class \"success\", id \"1\"] [text \"hello\"]"
-        --         (renderLeafElement testLeafElement2)
-        -- )
-        -- ,
         test "indent" (
             assertEqual
                 "        hello"
@@ -448,21 +339,6 @@ tests = suite "HtmlToElm.elm"
                 [IndentTreeLeaf "[ X", IndentTreeLeaf ", X", IndentTreeLeaf "]"]
                 (formatHaskellMultilineList [IndentTreeLeaf "X", IndentTreeLeaf "X"])
         )
-        -- ,
-        -- test "emptyTag" (
-        --     assertEqual
-        --         (IndentTrees <|
-        --             [
-        --                 IndentTreeLeaf "div",
-        --                 IndentTrees <|
-        --                     [
-        --                         IndentTreeLeaf ("[  ]"),
-        --                         IndentTreeLeaf ("[  ]")
-        --                     ]
-        --             ]
-        --         )
-        --         (renderNode <| parseHtml "<div></div>")
-        -- )
         ,
         test "just text" (
             assertEqual

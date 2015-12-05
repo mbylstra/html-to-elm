@@ -160,22 +160,10 @@ xhtmlToRawAst s =
         result
 
 
+
 --------------------------------------------------------------------------------
 -- TESTS
 --------------------------------------------------------------------------------
---                 UnlabelledAstNode <| AstChildren
---                     [ UnlabelledAstNode <| AstChildren
---                         [ UnlabelledAstNode (AstLeaf "class") ]
---                     , UnlabelledAstNode <| AstChildren
---                         [ UnlabelledAstNode <| AstChildren
---                             [ UnlabelledAstNode <| AstChildren
---                                 [ UnlabelledAstNode <| AstLeaf "success" ]
---                                 , UnlabelledAstNode <| AstLeaf " "
---                                 , UnlabelledAstNode <| AstChildren
---                                 [ UnlabelledAstNode <| AstLeaf "awesome" ]
---                             ]
---                         ]
---                     ]
 
 -- test data -------------------------------------------------------------------
 
@@ -345,16 +333,6 @@ tests = suite "HtmlParser.elm"
         )
     , test "parseOpeningTag one attribute"
         ( assertEqual
---             ( ParseMatchesReturnsResult <| LabelledAstNode
---                 { label = "OPENING_TAG"
---                 , value = AstChildren
---                     [ UnlabelledAstNode <| AstLeaf "div"
---                     , UnlabelledAstNode <| AstChildren
---                         [ attributeId1 ]
---                     ]
---                 }
---             , []
---             )
             ( ParseMatchesReturnsResult testOpeningTagNode
             , []
             )
