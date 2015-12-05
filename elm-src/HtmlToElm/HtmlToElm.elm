@@ -295,39 +295,6 @@ tests = suite "HtmlToElm.elm"
                 (IndentTrees [IndentTreeLeaf "a", IndentTreeLeaf "b"])
         )
         ,
-        test "renderVerticalChild" (
-            assertEqual
-                (IndentTrees
-                    [
-                        IndentTreeLeaf "div",
-                        IndentTrees
-                            [
-                                IndentTreeLeaf "[class \"success\", id \"1\"]",
-                                IndentTreeLeaf "[]"
-                            ]
-                    ]
-                )
-                (renderVerticalChild testLeafElement2)
-        )
-        ,
-        test "indentTreeStrings" (
-            assertEqual
-                (IndentTreeLeaf "    hello")
-                (indentTreeStrings 4 (IndentTreeLeaf "hello"))
-        )
-        ,
-        test "indentTreeStrings" (
-            assertEqual
-                (IndentTrees ([IndentTreeLeaf ("  a"),IndentTreeLeaf ("  b")]))
-                (indentTreeStrings 1 (IndentTrees [IndentTreeLeaf "a", IndentTreeLeaf "b"]))
-        )
-        ,
-        test "indentTreeStrings" (
-            assertEqual
-                (IndentTrees ([IndentTreeLeaf ("  a"), IndentTrees ([IndentTreeLeaf ("   b")])]))
-                (indentTreeStrings 1 testIndentTree)
-        )
-        ,
         test "flattenIndentTree" (
             assertEqual
                 ["a", "b"]
