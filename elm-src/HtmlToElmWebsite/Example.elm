@@ -1,0 +1,41 @@
+-- toString |=| "s
+
+
+-- div
+--     => [ class "top-bar" ]
+--     [ div
+--         =>  [ class "top-bar-left" ]
+--         [ ul
+--             => [ class "dropdown menu", data-dropdown-menu "" ]
+--             [
+--             , li [ class "menu-text" ] [ text "Site Title" ]
+--             , li
+--                 [ class "has-submenu" ]
+--                 [ a [ href "#" ] [ text "One" ]
+--                 , ul
+--                     [ class "submenu menu vertical", data-submenu "" ]
+--                     [ li [] [ a [ href "#" ] [ text "One" ] ]
+--                     , li [] [ a [ href "#" ] [ text "Two" ] ]
+--                     , li [] [ a [ href "#" ] [ text "Three" ] ]
+--                     ]
+--                 ]
+--             , li [] [ a [ href "#" ] [ text "Two" ] ]
+--             , li [] [ a [ href "#" ] [ text "Three" ] ]
+--             ]
+--         ]
+--     , div
+--         <=> [ class "top-bar-right" ]
+--         [ ul
+--             <=> [ class "menu" ]
+--             [ li
+--                 []
+--                 [ input [ placeholder "Search", type "search" ] []
+--                 , li
+--                     []
+--                     [ button [ class "button", type "button" ]
+--                         [ text "Search" ]
+--                     ]
+--                 ]
+--             ]
+--         ]
+--     ]

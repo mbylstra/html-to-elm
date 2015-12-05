@@ -1,0 +1,173 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+/******************************************************************************/
+
+html {
+	height: 100%;
+}
+body {
+  font-size: 18px;
+  font-family: "Source Sans Pro";
+  color: #293c4b;
+	height: 100%;
+}
+
+a {
+  color: #293c4b;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+pre {
+	font-size: 14px;
+  line-height: 1.3em;
+  font-family: 'Source Code Mono', monospace;
+}
+
+#main {
+	height: 100%;
+}
+
+.top-bar {
+  background-color: #60B5CC;
+}
+
+.elm-code {
+	overflow-y: auto;
+}
+
+.left-panel {
+	background-color: #f7f7f7;
+}
+.right-panel {
+	background-color: #2d2d2d;
+}
+
+.left-panel-heading {
+	background-color: #E2E2E2;
+	line-height: 30px;
+	padding-left: 10px;
+}
+.right-panel-heading {
+	background-color: #484848;
+	line-height: 30px;
+	padding-left: 10px;
+	color: #CCC;
+}
+.right-panel-heading a {
+	color: #ccc;
+	text-decoration: underline;
+}
+
+.CodeMirror {
+	/*padding: 20px;*/
+	font-size: 14px;
+}
+
+.CodeMirror pre {
+    padding: 0 10px;
+}
+
+.CodeMirror-lines {
+    padding: 17px 0;
+}
+
+.hljs {
+	overflow: auto;
+	padding-left: 12px;
+	padding-top: 15px;
+}
+
+.copy-button {
+	width: 100px;
+	height: 50px;
+	position: absolute;
+	top: 50px;
+	right: 30px;
+	background-color: #7FD13B;
+	color: white;
+	text-align: center;
+	line-height: 50px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+.copy-button:hover {
+	background-color: #7FD13B;
+}
+
+.cm-s-3024-day span.cm-tag {
+	color: #66cccc;
+}
+
+.cm-s-3024-day span.cm-string {
+    color: #99cc99;
+}
+
+.example-button {
+	background-color: #55a1b5;
+	border-radius: 4px;
+	padding: 2px 10px;
+	font-size: 14px;
+	cursor: pointer;
+	margin-left: 5px;
+	color: white;
+}
+
+
+.hint {
+    background-color: #9C9B76;
+    line-height: 30px;
+    color: white;
+	padding-left: 10px;
+}

@@ -1,0 +1,23 @@
+{
+  "name": "elm-99-problems",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mbylstra/elm-99-problems.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mbylstra/elm-99-problems/issues"
+  },
+  "homepage": "https://github.com/mbylstra/elm-99-problems#readme",
+  "dependencies": {
+    "codemirror": "^5.8.0",
+    "gulp-elm": "^0.2.0"
+  }
+}
