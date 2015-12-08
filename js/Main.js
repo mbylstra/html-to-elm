@@ -13594,7 +13594,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
                   }
             } else {
                return _U.crashCase("Parser.ParserHelpers",
-               {start: {line: 128,column: 13},end: {line: 136,column: 80}},
+               {start: {line: 132,column: 13},end: {line: 140,column: 80}},
                _p0)("flatten does not support Labelled nodes yet!");
             }
       };
@@ -13611,7 +13611,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
                }
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 143,column: 9},end: {line: 151,column: 76}},
+            {start: {line: 147,column: 9},end: {line: 155,column: 76}},
             _p3)("flatten does not support Labelled nodes yet!");
          }
    };
@@ -13635,7 +13635,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
             return _p7._0.label;
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 115,column: 5},end: {line: 119,column: 28}},
+            {start: {line: 119,column: 5},end: {line: 123,column: 28}},
             _p7)("");
          }
    };
@@ -13645,7 +13645,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
             return _p9._1;
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 95,column: 5},end: {line: 99,column: 28}},
+            {start: {line: 99,column: 5},end: {line: 103,column: 28}},
             _p9)("");
          }
    };
@@ -13655,7 +13655,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
             return _p11._0;
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 88,column: 5},end: {line: 92,column: 55}},
+            {start: {line: 92,column: 5},end: {line: 96,column: 55}},
             _p11)("unsafe Head returned crash!");
          }
    };
@@ -13704,7 +13704,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
                }
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 49,column: 5},end: {line: 56,column: 28}},
+            {start: {line: 53,column: 5},end: {line: 60,column: 28}},
             _p18)("");
          }
    };
@@ -13775,11 +13775,15 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
                                                                                               ,$Parser$Parser.UnlabelledAstNode($Parser$Parser.AstChildren(_U.list([$Parser$Parser.UnlabelledAstNode($Parser$Parser.AstLeaf("two"))
                                                                                                                                                                    ,$Parser$Parser.UnlabelledAstNode($Parser$Parser.AstChildren(_U.list([$Parser$Parser.UnlabelledAstNode($Parser$Parser.AstLeaf("three"))])))])))]))))))]));
    var main = $ElmTest.elementRunner(tests);
+   var parseWordKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.Word);
+   var parseDashKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.Dash);
+   var parseExclamationMarkKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.ExclamationMark);
+   var parseDoubleQuotationMarkKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.DoubleQuotationMark);
+   var parseWhitespaceKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.Whitespace);
    var parseEqualsSignKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.EqualsSign);
    var parseForwardSlashKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.ForwardSlash);
-   var parseDashKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.Dash);
-   var parseWhitespaceKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.Whitespace);
-   var parseWordKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.Word);
+   var parseRightAngleBracketKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.RightAngleBracket);
+   var parseLeftAngleBracketKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.LeftAngleBracket);
    var parseDashIgnore = $Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.Dash);
    var parseExclamationMarkIgnore = $Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.ExclamationMark);
    var parseDoubleQuotationMarkIgnore = $Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.DoubleQuotationMark);
@@ -13798,11 +13802,15 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
                                              ,parseDoubleQuotationMarkIgnore: parseDoubleQuotationMarkIgnore
                                              ,parseExclamationMarkIgnore: parseExclamationMarkIgnore
                                              ,parseDashIgnore: parseDashIgnore
-                                             ,parseWordKeep: parseWordKeep
-                                             ,parseWhitespaceKeep: parseWhitespaceKeep
-                                             ,parseDashKeep: parseDashKeep
+                                             ,parseLeftAngleBracketKeep: parseLeftAngleBracketKeep
+                                             ,parseRightAngleBracketKeep: parseRightAngleBracketKeep
                                              ,parseForwardSlashKeep: parseForwardSlashKeep
                                              ,parseEqualsSignKeep: parseEqualsSignKeep
+                                             ,parseWhitespaceKeep: parseWhitespaceKeep
+                                             ,parseDoubleQuotationMarkKeep: parseDoubleQuotationMarkKeep
+                                             ,parseExclamationMarkKeep: parseExclamationMarkKeep
+                                             ,parseDashKeep: parseDashKeep
+                                             ,parseWordKeep: parseWordKeep
                                              ,parseIgnoreOptionalWhitespace: parseIgnoreOptionalWhitespace
                                              ,unpackStringFromNode: unpackStringFromNode
                                              ,unpackListFromNode: unpackListFromNode
@@ -13867,7 +13875,13 @@ Elm.HtmlParser.HtmlParserRawAst.make = function (_elm) {
    var parseTextNode = A2($Parser$Parser.labelled,
    "TEXT",
    $Parser$Parser.createParseAtLeastOneFunction($Parser$Parser.createParseAnyFunction(_U.list([$Parser$ParserHelpers.parseWordKeep
-                                                                                              ,$Parser$ParserHelpers.parseWhitespaceKeep]))));
+                                                                                              ,$Parser$ParserHelpers.parseWhitespaceKeep
+                                                                                              ,$Parser$ParserHelpers.parseDashKeep
+                                                                                              ,$Parser$ParserHelpers.parseEqualsSignKeep
+                                                                                              ,$Parser$ParserHelpers.parseDoubleQuotationMarkKeep
+                                                                                              ,$Parser$ParserHelpers.parseForwardSlashKeep
+                                                                                              ,$Parser$ParserHelpers.parseDashKeep
+                                                                                              ,$Parser$ParserHelpers.parseRightAngleBracketKeep]))));
    var parseComment = $Parser$Parser.ignore($Parser$Parser.createParseSequenceFunction(_U.list([$Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.OpeningComment)
                                                                                                ,parseTextNode
                                                                                                ,$Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.ClosingComment)])));
@@ -14080,7 +14094,7 @@ Elm.HtmlParser.HtmlParser.make = function (_elm) {
             return _p0._0;
          } else {
             return _U.crashCase("HtmlParser.HtmlParser",
-            {start: {line: 315,column: 5},end: {line: 317,column: 29}},
+            {start: {line: 329,column: 5},end: {line: 331,column: 29}},
             _p0)("");
          }
    };
@@ -14090,7 +14104,7 @@ Elm.HtmlParser.HtmlParser.make = function (_elm) {
             return _p2._0;
          } else {
             return _U.crashCase("HtmlParser.HtmlParser",
-            {start: {line: 309,column: 5},end: {line: 311,column: 29}},
+            {start: {line: 323,column: 5},end: {line: 325,column: 29}},
             _p2)("");
          }
    };
@@ -14164,21 +14178,17 @@ Elm.HtmlParser.HtmlParser.make = function (_elm) {
       var _p5 = A2($Dict.get,label,astNodeTypeLookup);
       if (_p5.ctor === "Just") {
             var _p7 = _p5._0;
-            var _p6 = A2($Debug.log,"nodeType",_p7);
+            var _p6 = _p7;
             if (_p6.ctor === "OpeningTagAstNode") {
                   return A2($List.member,
                   getTagName(astNode),
-                  voidElements) ? A2($Debug.log,
-                  "Found SelfClosing",
-                  SelfClosingTagAstNode) : A2($Debug.log,
-                  "found opening",
-                  OpeningTagAstNode);
+                  voidElements) ? SelfClosingTagAstNode : OpeningTagAstNode;
                } else {
                   return _p7;
                }
          } else {
             return _U.crashCase("HtmlParser.HtmlParser",
-            {start: {line: 149,column: 9},end: {line: 162,column: 32}},
+            {start: {line: 160,column: 9},end: {line: 173,column: 32}},
             _p5)("");
          }
    };
@@ -14286,7 +14296,7 @@ Elm.HtmlParser.HtmlParser.make = function (_elm) {
          case "ParseMatchesReturnsResult":
          return astNodeToHtmlNode(_p21._0);
          default: return _U.crashCase("HtmlParser.HtmlParser",
-           {start: {line: 231,column: 9},end: {line: 236,column: 33}},
+           {start: {line: 244,column: 9},end: {line: 249,column: 33}},
            _p21)("");}
    };
    var tests = A2($ElmTest.suite,
@@ -14674,7 +14684,7 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
             A2($Basics._op["++"],removeNewlines(_p2._0),"\""));
          } else {
             return _U.crashCase("HtmlToElm.HtmlToElm",
-            {start: {line: 75,column: 5},end: {line: 79,column: 28}},
+            {start: {line: 78,column: 5},end: {line: 82,column: 28}},
             _p2)("");
          }
    };
@@ -14762,7 +14772,7 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
                      _p10._0._1));
                   } else {
                      return _U.crashCase("HtmlToElm.HtmlToElm",
-                     {start: {line: 209,column: 13},end: {line: 215,column: 36}},
+                     {start: {line: 189,column: 13},end: {line: 195,column: 36}},
                      _p10)("");
                   }
             }
@@ -14778,7 +14788,7 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
                      _p12._0._1));
                   } else {
                      return _U.crashCase("HtmlToElm.HtmlToElm",
-                     {start: {line: 199,column: 13},end: {line: 205,column: 36}},
+                     {start: {line: 179,column: 13},end: {line: 185,column: 36}},
                      _p12)("");
                   }
             }
@@ -14890,33 +14900,6 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
            IndentTrees(_U.list([IndentTreeLeaf("a"),IndentTreeLeaf("b")])),
            IndentTrees(_U.list([IndentTreeLeaf("a")
                                ,IndentTreeLeaf("b")]))))
-           ,A2($ElmTest.test,
-           "renderVerticalChild",
-           A2($ElmTest.assertEqual,
-           IndentTrees(_U.list([IndentTreeLeaf("div")
-                               ,IndentTrees(_U.list([IndentTreeLeaf("[class \"success\", id \"1\"]")
-                                                    ,IndentTreeLeaf("[]")]))])),
-           renderVerticalChild(testLeafElement2)))
-           ,A2($ElmTest.test,
-           "indentTreeStrings",
-           A2($ElmTest.assertEqual,
-           IndentTreeLeaf("    hello"),
-           A2(indentTreeStrings,4,IndentTreeLeaf("hello"))))
-           ,A2($ElmTest.test,
-           "indentTreeStrings",
-           A2($ElmTest.assertEqual,
-           IndentTrees(_U.list([IndentTreeLeaf("  a")
-                               ,IndentTreeLeaf("  b")])),
-           A2(indentTreeStrings,
-           1,
-           IndentTrees(_U.list([IndentTreeLeaf("a")
-                               ,IndentTreeLeaf("b")])))))
-           ,A2($ElmTest.test,
-           "indentTreeStrings",
-           A2($ElmTest.assertEqual,
-           IndentTrees(_U.list([IndentTreeLeaf("  a")
-                               ,IndentTrees(_U.list([IndentTreeLeaf("   b")]))])),
-           A2(indentTreeStrings,1,testIndentTree)))
            ,A2($ElmTest.test,
            "flattenIndentTree",
            A2($ElmTest.assertEqual,
@@ -15210,7 +15193,7 @@ Elm.Main.make = function (_elm) {
                default: return _U.update(model,{indentSpaces: _p1._0});}
          } else {
             return _U.crashCase("Main",
-            {start: {line: 170,column: 5},end: {line: 190,column: 52}},
+            {start: {line: 177,column: 5},end: {line: 197,column: 52}},
             _p0)("This should never happen.");
          }
    });
