@@ -36,11 +36,15 @@ parseDoubleQuotationMarkIgnore = createParseTokenIgnoreFunction DoubleQuotationM
 parseExclamationMarkIgnore = createParseTokenIgnoreFunction ExclamationMark
 parseDashIgnore = createParseTokenIgnoreFunction Dash
 
-parseWordKeep = createParseTokenKeepFunction Word
-parseWhitespaceKeep = createParseTokenKeepFunction Whitespace
-parseDashKeep = createParseTokenKeepFunction Dash
+parseLeftAngleBracketKeep = createParseTokenKeepFunction LeftAngleBracket
+parseRightAngleBracketKeep = createParseTokenKeepFunction RightAngleBracket
 parseForwardSlashKeep = createParseTokenKeepFunction ForwardSlash
 parseEqualsSignKeep = createParseTokenKeepFunction EqualsSign
+parseWhitespaceKeep = createParseTokenKeepFunction Whitespace
+parseDoubleQuotationMarkKeep = createParseTokenKeepFunction DoubleQuotationMark
+parseExclamationMarkKeep = createParseTokenKeepFunction ExclamationMark
+parseDashKeep = createParseTokenKeepFunction Dash
+parseWordKeep = createParseTokenKeepFunction Word
 
 parseIgnoreOptionalWhitespace = optional <| parseWhitespaceIgnore
 

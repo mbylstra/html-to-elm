@@ -123,7 +123,18 @@ parseTextNode : ParseFunction
 parseTextNode =
     labelled "TEXT"
     <| createParseAtLeastOneFunction
-    <| createParseAnyFunction [parseWordKeep, parseWhitespaceKeep]
+    <| createParseAnyFunction
+        [ parseWordKeep
+        , parseWhitespaceKeep
+        , parseDashKeep
+        , parseEqualsSignKeep
+        , parseDoubleQuotationMarkKeep
+        , parseForwardSlashKeep
+        , parseDashKeep
+        , parseRightAngleBracketKeep
+        ]
+
+
 
 
 parseOpeningCommentIgnore = createParseTokenIgnoreFunction OpeningComment
