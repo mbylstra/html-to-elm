@@ -197,12 +197,13 @@ formatHaskellMultilineList indentTrees =
         case indentTrees of
             headTree::[] ->
                 -- here we need a tree size function, that traverse the tree
-                -- if the headTree is a leaf, then run transformHeadlINe and add "]" to end
+                -- if the headTree is a leaf, then run transformHeadline and add "]" to end
                 case headTree of
                     IndentTreeLeaf s ->
                         [IndentTreeLeaf <| "[ " ++ s ++ " ]"]
                     _ ->
                         [transformHeadLine headTree]
+                            ++ [IndentTreeLeaf "]"]
             headTree::tailTrees ->
                 [transformHeadLine headTree]
                     ++ (List.map transformTailLine tailTrees)

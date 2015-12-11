@@ -14803,7 +14803,9 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
                         "[ ",
                         A2($Basics._op["++"],_p15._0," ]")))]);
                      } else {
-                        return _U.list([transformHeadLine(_p16)]);
+                        return A2($Basics._op["++"],
+                        _U.list([transformHeadLine(_p16)]),
+                        _U.list([IndentTreeLeaf("]")]));
                      }
                } else {
                   return A2($Basics._op["++"],
