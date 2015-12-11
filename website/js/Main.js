@@ -14409,7 +14409,6 @@ Elm.HtmlToElm.ElmHtmlWhitelists.make = function (_elm) {
    var _op = {};
    var reservedWords = _U.list(["main","type"]);
    var implementedAttributeFunctions = _U.list(["key"
-                                               ,"style"
                                                ,"class"
                                                ,"classList"
                                                ,"id"

@@ -106,7 +106,7 @@ implementedTagFunctions =
 implementedAttributeFunctions =
     [
         "key",
-        "style",
+        -- "style",   -- style is disabled as it requires special parsing
         "class",
         "classList",
         "id",
