@@ -73,11 +73,17 @@ renderAttributes attributes =
             _ -> "[ " ++ innards ++ " ]"
 
 
+
+
 renderTextNode : Node -> String
 renderTextNode node =
     case node of
         Text text ->
-            "text \"" ++ (removeNewlines text) ++ "\""
+            let
+                text' = text |> removeNewlines |> escapeDoubleQuotes
+
+            in
+                "text \"" ++ text' ++ "\""
         _ ->
             Debug.crash("")
 
@@ -167,6 +173,10 @@ removeNewlines : String -> String
 removeNewlines s =
     Regex.replace Regex.All (regex "\n") (\_ -> "") s
 
+
+escapeDoubleQuotes : String -> String
+escapeDoubleQuotes s =
+    Regex.replace Regex.All (regex "\"") (\_ -> "\\\"") s
 
 formatHaskellMultilineList : List IndentTree -> List IndentTree
 formatHaskellMultilineList indentTrees =
