@@ -14642,11 +14642,20 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
    var testLeafElement2 = $HtmlParser$HtmlParser.Element({tagName: "div"
                                                          ,attributes: testAttributes
                                                          ,children: _U.list([$HtmlParser$HtmlParser.Text("hello")])});
+   var escapeDoubleQuotes = function (s) {
+      return A4($Regex.replace,
+      $Regex.All,
+      $Regex.regex("\""),
+      function (_p0) {
+         return "\\\"";
+      },
+      s);
+   };
    var removeNewlines = function (s) {
       return A4($Regex.replace,
       $Regex.All,
       $Regex.regex("\n"),
-      function (_p0) {
+      function (_p1) {
          return "";
       },
       s);
@@ -14657,11 +14666,11 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
          flattenIndentTree(indentTree),
          acc);
       });
-      var _p1 = indentTree;
-      if (_p1.ctor === "IndentTreeLeaf") {
-            return _U.list([_p1._0]);
+      var _p2 = indentTree;
+      if (_p2.ctor === "IndentTreeLeaf") {
+            return _U.list([_p2._0]);
          } else {
-            return A3($List.foldr,flattenIndentTree$,_U.list([]),_p1._0);
+            return A3($List.foldr,flattenIndentTree$,_U.list([]),_p2._0);
          }
    };
    var renderTagFunctionHead = function (tagName) {
@@ -14676,15 +14685,16 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
       A2($Basics._op["++"],tagName,"\""));
    };
    var renderTextNode = function (node) {
-      var _p2 = node;
-      if (_p2.ctor === "Text") {
+      var _p3 = node;
+      if (_p3.ctor === "Text") {
+            var text$ = escapeDoubleQuotes(removeNewlines(_p3._0));
             return A2($Basics._op["++"],
             "text \"",
-            A2($Basics._op["++"],removeNewlines(_p2._0),"\""));
+            A2($Basics._op["++"],text$,"\""));
          } else {
             return _U.crashCase("HtmlToElm.HtmlToElm",
-            {start: {line: 78,column: 5},end: {line: 82,column: 28}},
-            _p2)("");
+            {start: {line: 80,column: 5},end: {line: 88,column: 28}},
+            _p3)("");
          }
    };
    var indent = F3(function (spacesPerIndent,indentLevel,s) {
@@ -14692,33 +14702,33 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
       var listOfSpaces = A2($List.repeat,spaces," ");
       return A2($Basics._op["++"],A2($String.join,"",listOfSpaces),s);
    });
-   var renderAttribute = function (_p4) {
-      var _p5 = _p4;
-      var _p7 = _p5._1;
-      var _p6 = _p5._0;
+   var renderAttribute = function (_p5) {
+      var _p6 = _p5;
+      var _p8 = _p6._1;
+      var _p7 = _p6._0;
       return A2($List.member,
-      _p6,
+      _p7,
       $HtmlToElm$ElmHtmlWhitelists.implementedAttributeFunctions) ? A2($Basics._op["++"],
-      _p6,
+      _p7,
       A2($Basics._op["++"],
       " ",
       A2($Basics._op["++"],
       "\"",
-      A2($Basics._op["++"],_p7,"\"")))) : A2($List.member,
-      _p6,
+      A2($Basics._op["++"],_p8,"\"")))) : A2($List.member,
+      _p7,
       $HtmlToElm$ElmHtmlWhitelists.reservedWords) ? A2($Basics._op["++"],
-      _p6,
+      _p7,
       A2($Basics._op["++"],
       "\' ",
       A2($Basics._op["++"],
       "\"",
-      A2($Basics._op["++"],_p7,"\"")))) : A2($Basics._op["++"],
+      A2($Basics._op["++"],_p8,"\"")))) : A2($Basics._op["++"],
       "attribute \"",
       A2($Basics._op["++"],
-      _p6,
+      _p7,
       A2($Basics._op["++"],
       "\"",
-      A2($Basics._op["++"]," \"",A2($Basics._op["++"],_p7,"\"")))));
+      A2($Basics._op["++"]," \"",A2($Basics._op["++"],_p8,"\"")))));
    };
    var renderAttributes = function (attributes) {
       var attributesList = $Dict.toList(attributes);
@@ -14726,8 +14736,8 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
       renderAttribute,
       attributesList);
       var innards = A2($String.join,", ",attributeListString);
-      var _p8 = innards;
-      if (_p8 === "") {
+      var _p9 = innards;
+      if (_p9 === "") {
             return "[]";
          } else {
             return A2($Basics._op["++"],
@@ -14745,72 +14755,72 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
    originalTree) {
       var indentTreeStrings$ = F2(function (depth,currTree) {
          var indentLevel = depth / 2 | 0;
-         var _p9 = currTree;
-         if (_p9.ctor === "IndentTreeLeaf") {
+         var _p10 = currTree;
+         if (_p10.ctor === "IndentTreeLeaf") {
                return IndentTreeLeaf(A3(indent,
                spacesPerIndent,
                indentLevel,
-               _p9._0));
+               _p10._0));
             } else {
                return IndentTrees(A2($List.map,
                indentTreeStrings$(depth + 1),
-               _p9._0));
+               _p10._0));
             }
       });
       return A2(indentTreeStrings$,0,originalTree);
    });
    var formatHaskellMultilineList = function (indentTrees) {
       var transformTailLine = function (indentTree$) {
-         var _p10 = indentTree$;
-         if (_p10.ctor === "IndentTreeLeaf") {
-               return IndentTreeLeaf(A2($Basics._op["++"],", ",_p10._0));
+         var _p11 = indentTree$;
+         if (_p11.ctor === "IndentTreeLeaf") {
+               return IndentTreeLeaf(A2($Basics._op["++"],", ",_p11._0));
             } else {
-               if (_p10._0.ctor === "::") {
+               if (_p11._0.ctor === "::") {
                      return IndentTrees(A2($Basics._op["++"],
-                     _U.list([transformTailLine(_p10._0._0)]),
-                     _p10._0._1));
+                     _U.list([transformTailLine(_p11._0._0)]),
+                     _p11._0._1));
                   } else {
                      return _U.crashCase("HtmlToElm.HtmlToElm",
-                     {start: {line: 189,column: 13},end: {line: 195,column: 36}},
-                     _p10)("");
+                     {start: {line: 199,column: 13},end: {line: 205,column: 36}},
+                     _p11)("");
                   }
             }
       };
       var transformHeadLine = function (indentTree$) {
-         var _p12 = indentTree$;
-         if (_p12.ctor === "IndentTreeLeaf") {
-               return IndentTreeLeaf(A2($Basics._op["++"],"[ ",_p12._0));
+         var _p13 = indentTree$;
+         if (_p13.ctor === "IndentTreeLeaf") {
+               return IndentTreeLeaf(A2($Basics._op["++"],"[ ",_p13._0));
             } else {
-               if (_p12._0.ctor === "::") {
+               if (_p13._0.ctor === "::") {
                      return IndentTrees(A2($Basics._op["++"],
-                     _U.list([transformHeadLine(_p12._0._0)]),
-                     _p12._0._1));
+                     _U.list([transformHeadLine(_p13._0._0)]),
+                     _p13._0._1));
                   } else {
                      return _U.crashCase("HtmlToElm.HtmlToElm",
-                     {start: {line: 179,column: 13},end: {line: 185,column: 36}},
-                     _p12)("");
+                     {start: {line: 189,column: 13},end: {line: 195,column: 36}},
+                     _p13)("");
                   }
             }
       };
-      var _p14 = indentTrees;
-      if (_p14.ctor === "::") {
-            if (_p14._1.ctor === "[]") {
-                  var _p16 = _p14._0;
-                  var _p15 = _p16;
-                  if (_p15.ctor === "IndentTreeLeaf") {
+      var _p15 = indentTrees;
+      if (_p15.ctor === "::") {
+            if (_p15._1.ctor === "[]") {
+                  var _p17 = _p15._0;
+                  var _p16 = _p17;
+                  if (_p16.ctor === "IndentTreeLeaf") {
                         return _U.list([IndentTreeLeaf(A2($Basics._op["++"],
                         "[ ",
-                        A2($Basics._op["++"],_p15._0," ]")))]);
+                        A2($Basics._op["++"],_p16._0," ]")))]);
                      } else {
                         return A2($Basics._op["++"],
-                        _U.list([transformHeadLine(_p16)]),
+                        _U.list([transformHeadLine(_p17)]),
                         _U.list([IndentTreeLeaf("]")]));
                      }
                } else {
                   return A2($Basics._op["++"],
-                  _U.list([transformHeadLine(_p14._0)]),
+                  _U.list([transformHeadLine(_p15._0)]),
                   A2($Basics._op["++"],
-                  A2($List.map,transformTailLine,_p14._1),
+                  A2($List.map,transformTailLine,_p15._1),
                   _U.list([IndentTreeLeaf("]")])));
                }
          } else {
@@ -14818,22 +14828,22 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
          }
    };
    var renderVerticalChild = function (node) {
-      var _p17 = node;
-      if (_p17.ctor === "Element") {
-            var _p19 = _p17._0.children;
+      var _p18 = node;
+      if (_p18.ctor === "Element") {
+            var _p20 = _p18._0.children;
             var childrenLines = function () {
-               var _p18 = _p19;
-               if (_p18.ctor === "[]") {
+               var _p19 = _p20;
+               if (_p19.ctor === "[]") {
                      return _U.list([IndentTreeLeaf("[]")]);
                   } else {
                      return formatHaskellMultilineList(A2($List.map,
                      renderNode,
-                     _p19));
+                     _p20));
                   }
             }();
             var firstLine = A2($Basics._op["++"],
-            renderTagFunctionHead(_p17._0.tagName),
-            A2($Basics._op["++"]," ",renderAttributes(_p17._0.attributes)));
+            renderTagFunctionHead(_p18._0.tagName),
+            A2($Basics._op["++"]," ",renderAttributes(_p18._0.attributes)));
             return IndentTrees(_U.list([IndentTreeLeaf(firstLine)
                                        ,IndentTrees(childrenLines)]));
          } else {
@@ -14855,11 +14865,11 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
    });
    var htmlToElm = F2(function (spacesPerIndent,s) {
       if (_U.eq(s,"")) return $Maybe.Just(""); else {
-            var _p20 = $HtmlParser$HtmlParser.parseHtml(s);
-            if (_p20.ctor === "Just") {
+            var _p21 = $HtmlParser$HtmlParser.parseHtml(s);
+            if (_p21.ctor === "Just") {
                   return $Maybe.Just(A2(htmlNodeToElm,
                   spacesPerIndent,
-                  _p20._0));
+                  _p21._0));
                } else {
                   return $Maybe.Nothing;
                }
@@ -14919,9 +14929,9 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
            A2($ElmTest.assertEqual,
            IndentTreeLeaf("x"),
            function () {
-              var _p21 = $HtmlParser$HtmlParser.parseHtml("hello");
-              if (_p21.ctor === "Just") {
-                    return renderNode(_p21._0);
+              var _p22 = $HtmlParser$HtmlParser.parseHtml("hello");
+              if (_p22.ctor === "Just") {
+                    return renderNode(_p22._0);
                  } else {
                     return IndentTreeLeaf("x");
                  }
@@ -14942,6 +14952,7 @@ Elm.HtmlToElm.HtmlToElm.make = function (_elm) {
                                             ,flattenIndentTree: flattenIndentTree
                                             ,htmlNodeToElm: htmlNodeToElm
                                             ,removeNewlines: removeNewlines
+                                            ,escapeDoubleQuotes: escapeDoubleQuotes
                                             ,formatHaskellMultilineList: formatHaskellMultilineList
                                             ,htmlToElm: htmlToElm
                                             ,testAttributes: testAttributes
