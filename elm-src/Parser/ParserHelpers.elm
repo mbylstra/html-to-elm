@@ -33,6 +33,7 @@ parseForwardSlashIgnore = createParseTokenIgnoreFunction ForwardSlash
 parseEqualsSignIgnore = createParseTokenIgnoreFunction EqualsSign
 parseWhitespaceIgnore = createParseTokenIgnoreFunction Whitespace
 parseDoubleQuotationMarkIgnore = createParseTokenIgnoreFunction DoubleQuotationMark
+parseSingleQuotationMarkIgnore = createParseTokenIgnoreFunction SingleQuotationMark
 parseExclamationMarkIgnore = createParseTokenIgnoreFunction ExclamationMark
 parseDashIgnore = createParseTokenIgnoreFunction Dash
 

@@ -20,6 +20,7 @@ type TokenType =    OpeningComment
                     | RightAngleBracket
                     | EqualsSign
                     | DoubleQuotationMark
+                    | SingleQuotationMark
                     | ForwardSlash
                     | ExclamationMark
                     | Dash
@@ -46,6 +47,7 @@ reservedCharTokenLookup =
         (RightAngleBracket, ">"),
         (EqualsSign, "="),
         (DoubleQuotationMark, "\""),
+        (SingleQuotationMark, "'"),
         (ForwardSlash, "/"),
         (Dash, "-")
     ]

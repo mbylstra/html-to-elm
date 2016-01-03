@@ -53,14 +53,20 @@ parseTagAttributeValue : ParseFunction
 parseTagAttributeValue =
     flatten  <| createParseSequenceFunction
         [ parseEqualsSignIgnore
-        , parseDoubleQuotationMarkIgnore
+        , createParseAnyFunction
+            [ parseDoubleQuotationMarkIgnore
+            , parseSingleQuotationMarkIgnore
+            ]
         , createOptionallyParseMultipleFunction <| createParseAnyFunction
             [ parseWordWithDashes
             , parseWhitespaceKeep
             , parseForwardSlashKeep
             , parseEqualsSignKeep
             ]
-        , parseDoubleQuotationMarkIgnore
+        , createParseAnyFunction 
+            [ parseDoubleQuotationMarkIgnore
+            , parseSingleQuotationMarkIgnore
+            ]
         ]
 
 
@@ -418,4 +424,3 @@ tests = suite "HtmlParser.elm"
 
 main =
     elementRunner tests
-

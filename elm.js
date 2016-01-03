@@ -10398,6 +10398,7 @@ Elm.Parser.Tokenizer.make = function (_elm) {
    var Dash = {ctor: "Dash"};
    var ExclamationMark = {ctor: "ExclamationMark"};
    var ForwardSlash = {ctor: "ForwardSlash"};
+   var SingleQuotationMark = {ctor: "SingleQuotationMark"};
    var DoubleQuotationMark = {ctor: "DoubleQuotationMark"};
    var EqualsSign = {ctor: "EqualsSign"};
    var RightAngleBracket = {ctor: "RightAngleBracket"};
@@ -10409,6 +10410,7 @@ Elm.Parser.Tokenizer.make = function (_elm) {
                                          ,{ctor: "_Tuple2",_0: RightAngleBracket,_1: ">"}
                                          ,{ctor: "_Tuple2",_0: EqualsSign,_1: "="}
                                          ,{ctor: "_Tuple2",_0: DoubleQuotationMark,_1: "\""}
+                                         ,{ctor: "_Tuple2",_0: SingleQuotationMark,_1: "\'"}
                                          ,{ctor: "_Tuple2",_0: ForwardSlash,_1: "/"}
                                          ,{ctor: "_Tuple2",_0: Dash,_1: "-"}]);
    var wordRegex = function () {
@@ -10508,6 +10510,7 @@ Elm.Parser.Tokenizer.make = function (_elm) {
                                          ,RightAngleBracket: RightAngleBracket
                                          ,EqualsSign: EqualsSign
                                          ,DoubleQuotationMark: DoubleQuotationMark
+                                         ,SingleQuotationMark: SingleQuotationMark
                                          ,ForwardSlash: ForwardSlash
                                          ,ExclamationMark: ExclamationMark
                                          ,Dash: Dash

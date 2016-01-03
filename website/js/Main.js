@@ -12878,6 +12878,7 @@ Elm.Parser.Tokenizer.make = function (_elm) {
    var Dash = {ctor: "Dash"};
    var ExclamationMark = {ctor: "ExclamationMark"};
    var ForwardSlash = {ctor: "ForwardSlash"};
+   var SingleQuotationMark = {ctor: "SingleQuotationMark"};
    var DoubleQuotationMark = {ctor: "DoubleQuotationMark"};
    var EqualsSign = {ctor: "EqualsSign"};
    var RightAngleBracket = {ctor: "RightAngleBracket"};
@@ -12889,6 +12890,7 @@ Elm.Parser.Tokenizer.make = function (_elm) {
                                          ,{ctor: "_Tuple2",_0: RightAngleBracket,_1: ">"}
                                          ,{ctor: "_Tuple2",_0: EqualsSign,_1: "="}
                                          ,{ctor: "_Tuple2",_0: DoubleQuotationMark,_1: "\""}
+                                         ,{ctor: "_Tuple2",_0: SingleQuotationMark,_1: "\'"}
                                          ,{ctor: "_Tuple2",_0: ForwardSlash,_1: "/"}
                                          ,{ctor: "_Tuple2",_0: Dash,_1: "-"}]);
    var wordRegex = function () {
@@ -12988,6 +12990,7 @@ Elm.Parser.Tokenizer.make = function (_elm) {
                                          ,RightAngleBracket: RightAngleBracket
                                          ,EqualsSign: EqualsSign
                                          ,DoubleQuotationMark: DoubleQuotationMark
+                                         ,SingleQuotationMark: SingleQuotationMark
                                          ,ForwardSlash: ForwardSlash
                                          ,ExclamationMark: ExclamationMark
                                          ,Dash: Dash
@@ -13594,7 +13597,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
                   }
             } else {
                return _U.crashCase("Parser.ParserHelpers",
-               {start: {line: 132,column: 13},end: {line: 140,column: 80}},
+               {start: {line: 133,column: 13},end: {line: 141,column: 80}},
                _p0)("flatten does not support Labelled nodes yet!");
             }
       };
@@ -13611,7 +13614,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
                }
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 147,column: 9},end: {line: 155,column: 76}},
+            {start: {line: 148,column: 9},end: {line: 156,column: 76}},
             _p3)("flatten does not support Labelled nodes yet!");
          }
    };
@@ -13635,7 +13638,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
             return _p7._0.label;
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 119,column: 5},end: {line: 123,column: 28}},
+            {start: {line: 120,column: 5},end: {line: 124,column: 28}},
             _p7)("");
          }
    };
@@ -13645,7 +13648,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
             return _p9._1;
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 99,column: 5},end: {line: 103,column: 28}},
+            {start: {line: 100,column: 5},end: {line: 104,column: 28}},
             _p9)("");
          }
    };
@@ -13655,7 +13658,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
             return _p11._0;
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 92,column: 5},end: {line: 96,column: 55}},
+            {start: {line: 93,column: 5},end: {line: 97,column: 55}},
             _p11)("unsafe Head returned crash!");
          }
    };
@@ -13704,7 +13707,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
                }
          } else {
             return _U.crashCase("Parser.ParserHelpers",
-            {start: {line: 53,column: 5},end: {line: 60,column: 28}},
+            {start: {line: 54,column: 5},end: {line: 61,column: 28}},
             _p18)("");
          }
    };
@@ -13786,6 +13789,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
    var parseLeftAngleBracketKeep = $Parser$Parser.createParseTokenKeepFunction($Parser$Tokenizer.LeftAngleBracket);
    var parseDashIgnore = $Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.Dash);
    var parseExclamationMarkIgnore = $Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.ExclamationMark);
+   var parseSingleQuotationMarkIgnore = $Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.SingleQuotationMark);
    var parseDoubleQuotationMarkIgnore = $Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.DoubleQuotationMark);
    var parseWhitespaceIgnore = $Parser$Parser.createParseTokenIgnoreFunction($Parser$Tokenizer.Whitespace);
    var parseIgnoreOptionalWhitespace = $Parser$Parser.optional(parseWhitespaceIgnore);
@@ -13800,6 +13804,7 @@ Elm.Parser.ParserHelpers.make = function (_elm) {
                                              ,parseEqualsSignIgnore: parseEqualsSignIgnore
                                              ,parseWhitespaceIgnore: parseWhitespaceIgnore
                                              ,parseDoubleQuotationMarkIgnore: parseDoubleQuotationMarkIgnore
+                                             ,parseSingleQuotationMarkIgnore: parseSingleQuotationMarkIgnore
                                              ,parseExclamationMarkIgnore: parseExclamationMarkIgnore
                                              ,parseDashIgnore: parseDashIgnore
                                              ,parseLeftAngleBracketKeep: parseLeftAngleBracketKeep
@@ -13896,12 +13901,14 @@ Elm.HtmlParser.HtmlParserRawAst.make = function (_elm) {
    var parseWordWithDashes = $Parser$Parser.createParseAtLeastOneFunction($Parser$Parser.createParseAnyFunction(_U.list([$Parser$ParserHelpers.parseWordKeep
                                                                                                                         ,$Parser$ParserHelpers.parseDashKeep])));
    var parseTagAttributeValue = $Parser$ParserHelpers.flatten($Parser$Parser.createParseSequenceFunction(_U.list([$Parser$ParserHelpers.parseEqualsSignIgnore
-                                                                                                                 ,$Parser$ParserHelpers.parseDoubleQuotationMarkIgnore
+                                                                                                                 ,$Parser$Parser.createParseAnyFunction(_U.list([$Parser$ParserHelpers.parseDoubleQuotationMarkIgnore
+                                                                                                                                                                ,$Parser$ParserHelpers.parseSingleQuotationMarkIgnore]))
                                                                                                                  ,$Parser$Parser.createOptionallyParseMultipleFunction($Parser$Parser.createParseAnyFunction(_U.list([parseWordWithDashes
                                                                                                                                                                                                                      ,$Parser$ParserHelpers.parseWhitespaceKeep
                                                                                                                                                                                                                      ,$Parser$ParserHelpers.parseForwardSlashKeep
                                                                                                                                                                                                                      ,$Parser$ParserHelpers.parseEqualsSignKeep])))
-                                                                                                                 ,$Parser$ParserHelpers.parseDoubleQuotationMarkIgnore])));
+                                                                                                                 ,$Parser$Parser.createParseAnyFunction(_U.list([$Parser$ParserHelpers.parseDoubleQuotationMarkIgnore
+                                                                                                                                                                ,$Parser$ParserHelpers.parseSingleQuotationMarkIgnore]))])));
    var parseTagAttribute = $Parser$Parser.createParseSequenceFunction(_U.list([$Parser$ParserHelpers.parseIgnoreOptionalWhitespace
                                                                               ,parseWordWithDashes
                                                                               ,$Parser$Parser.optional(parseTagAttributeValue)
