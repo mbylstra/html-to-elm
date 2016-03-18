@@ -99,7 +99,12 @@ implementedTagFunctions =
         "details",
         "summary",
         "menuitem",
-        "menu"
+        "menu",
+        -- svg specific bellow
+        "defs",
+        "clipPath",
+        "path", 
+        "g"
     ]
 
 
@@ -203,7 +208,11 @@ implementedAttributeFunctions =
         "pubdate",
         "manifest",
         "property",
-        "attribute"
+        "attribute",
+        -- svg specific bellow
+        "d", 
+        "fill", 
+        "viewBox"
     ]
 
 reservedWords =
