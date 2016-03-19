@@ -6613,29 +6613,51 @@ Elm.Console.Core.make = function (_elm) {
       xs);
    });
    var forEach = F2(function (xs,f) {    return A2(mapIO,f,xs);});
-   var map = F2(function (f,io) {
-      var _p8 = io;
-      if (_p8.ctor === "Pure") {
-            return Pure(f(_p8._0));
+   var map2 = F3(function (f,a,b) {
+      return A2(andThen,
+      a,
+      function (x) {
+         return A2(andThen,
+         b,
+         function (y) {
+            return pure(A2(f,x,y));
+         });
+      });
+   });
+   var sequenceMany = function (ios) {
+      var _p8 = ios;
+      if (_p8.ctor === "[]") {
+            return pure(_U.list([]));
          } else {
-            return Impure(A2(mapF,map(f),_p8._0));
+            return A3(map2,
+            F2(function (x,y) {    return A2($List._op["::"],x,y);}),
+            _p8._0,
+            sequenceMany(_p8._1));
+         }
+   };
+   var map = F2(function (f,io) {
+      var _p9 = io;
+      if (_p9.ctor === "Pure") {
+            return Pure(f(_p9._0));
+         } else {
+            return Impure(A2(mapF,map(f),_p9._0));
          }
    });
    var writeFile = function (obj) {
       return Impure(A2(WriteF,
       obj,
-      function (_p9) {
+      function (_p10) {
          return Pure({ctor: "_Tuple0"});
       }));
    };
    var putStr = function (s) {
       return Impure(A2(PutS,
       s,
-      function (_p10) {
+      function (_p11) {
          return Pure({ctor: "_Tuple0"});
       }));
    };
-   var exit = function (_p11) {    return Impure(Exit(_p11));};
+   var exit = function (_p12) {    return Impure(Exit(_p12));};
    var getChar = Impure(GetC(Pure));
    var readUntil = function (end) {
       var go = function (s) {
@@ -6653,7 +6675,7 @@ Elm.Console.Core.make = function (_elm) {
    var putChar = function (c) {
       return Impure(A2(PutS,
       A2($String.cons,c,""),
-      function (_p12) {
+      function (_p13) {
          return Pure({ctor: "_Tuple0"});
       }));
    };
@@ -6670,12 +6692,14 @@ Elm.Console.Core.make = function (_elm) {
                                      ,writeFile: writeFile
                                      ,getLine: getLine
                                      ,map: map
+                                     ,map2: map2
                                      ,mapIO: mapIO
                                      ,forEach: forEach
                                      ,pure: pure
                                      ,apply: apply
                                      ,andThen: andThen
                                      ,seq: seq
+                                     ,sequenceMany: sequenceMany
                                      ,forever: forever
                                      ,PutS: PutS
                                      ,GetC: GetC
@@ -9518,6 +9542,7 @@ Elm.Console.make = function (_elm) {
    var run = $Console$Runner.run;
    var forever = $Console$Core.forever;
    _op[">>>"] = $Console$Core.seq;
+   var sequenceMany = $Console$Core.sequenceMany;
    var seq = $Console$Core.seq;
    _op[">>="] = $Console$Core.andThen;
    var andThen = $Console$Core.andThen;
@@ -9526,6 +9551,7 @@ Elm.Console.make = function (_elm) {
    var pure = $Console$Core.pure;
    var forEach = $Console$Core.forEach;
    var mapIO = $Console$Core.mapIO;
+   var map2 = $Console$Core.map2;
    var map = $Console$Core.map;
    var getLine = $Console$Core.getLine;
    var writeFile = $Console$Core.writeFile;
@@ -9545,12 +9571,14 @@ Elm.Console.make = function (_elm) {
                                 ,writeFile: writeFile
                                 ,exit: exit
                                 ,map: map
+                                ,map2: map2
                                 ,mapIO: mapIO
                                 ,forEach: forEach
                                 ,pure: pure
                                 ,apply: apply
                                 ,andThen: andThen
                                 ,seq: seq
+                                ,sequenceMany: sequenceMany
                                 ,forever: forever
                                 ,run: run};
 };
@@ -9570,6 +9598,10 @@ Elm.ElmTest.Assertion.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
    var _op = {};
+   var AlwaysFail = function (a) {
+      return {ctor: "AlwaysFail",_0: a};
+   };
+   var AlwaysPass = {ctor: "AlwaysPass"};
    var AssertNotEqual = F3(function (a,b,c) {
       return {ctor: "AssertNotEqual",_0: a,_1: b,_2: c};
    });
@@ -9614,7 +9646,9 @@ Elm.ElmTest.Assertion.make = function (_elm) {
                                           ,AssertTrue: AssertTrue
                                           ,AssertFalse: AssertFalse
                                           ,AssertEqual: AssertEqual
-                                          ,AssertNotEqual: AssertNotEqual};
+                                          ,AssertNotEqual: AssertNotEqual
+                                          ,AlwaysPass: AlwaysPass
+                                          ,AlwaysFail: AlwaysFail};
 };
 Elm.ElmTest = Elm.ElmTest || {};
 Elm.ElmTest.Test = Elm.ElmTest.Test || {};
@@ -9679,9 +9713,11 @@ Elm.ElmTest.Test.make = function (_elm) {
             case "AssertEqual": return A2($Basics._op["++"],
               _p5._1,
               A2($Basics._op["++"]," == ",_p5._2));
-            default: return A2($Basics._op["++"],
+            case "AssertNotEqual": return A2($Basics._op["++"],
               _p5._1,
-              A2($Basics._op["++"]," /= ",_p5._2));}
+              A2($Basics._op["++"]," /= ",_p5._2));
+            case "AlwaysPass": return "Always passes";
+            default: return "Always fails";}
       }();
       return A2(test,name,a);
    };
@@ -9799,7 +9835,11 @@ Elm.ElmTest.Run.make = function (_elm) {
                  _p13._1,
                  A2($Basics._op["++"]," equals ",_p13._2)));
                case "AssertTrue": return A2(runAssertion,_p13._0,"not True");
-               default: return A2(runAssertion,_p13._0,"not False");}
+               case "AssertFalse": return A2(runAssertion,_p13._0,"not False");
+               case "AlwaysPass": return A2(runAssertion,
+                 $Basics.always(true),
+                 "");
+               default: return A2(runAssertion,$Basics.always(false),_p13._0);}
          } else {
             var results = A2($List.map,run,_p12._1);
             var _p15 = A2($List.partition,pass,results);
@@ -9995,6 +10035,7 @@ Elm.ElmTest.Runner.Element.make = function (_elm) {
       var trimmed = $String.trimLeft(s);
       return $String.length(s) - $String.length(trimmed);
    };
+   var red = A3($Color.rgb,255,126,132);
    var plainText = function (s) {
       return $Graphics$Element.leftAligned($Text.fromString(s));
    };
@@ -10006,25 +10047,21 @@ Elm.ElmTest.Runner.Element.make = function (_elm) {
       var w = indent(_p5) * 10;
       var _p2 = _p4;
       switch (_p2.ctor)
-      {case "Pass": return A2($Graphics$Element.color,
-           $Color.green,
-           A2($Graphics$Element.flow,
+      {case "Pass": return A2($Graphics$Element.flow,
            $Graphics$Element.right,
            _U.list([A2($Graphics$Element.spacer,w,1)
                    ,plainText(_p5)
-                   ,A2($Graphics$Element.spacer,w$,1)])));
+                   ,A2($Graphics$Element.spacer,w$,1)]));
          case "Fail": return A2($Graphics$Element.color,
-           $Color.red,
+           red,
            A2($Graphics$Element.flow,
            $Graphics$Element.right,
            _U.list([A2($Graphics$Element.spacer,w,1)
                    ,plainText(_p5)
                    ,A2($Graphics$Element.spacer,w$,1)])));
-         default: var c = _U.cmp($ElmTest$Run.failedTests(_p4),
-           0) > 0 ? $Color.red : $Color.green;
-           return A2($Graphics$Element.color,
-           c,
-           A2($Graphics$Element.flow,
+         default: var f = _U.cmp($ElmTest$Run.failedTests(_p4),
+           0) > 0 ? $Graphics$Element.color(red) : $Basics.identity;
+           return f(A2($Graphics$Element.flow,
            $Graphics$Element.right,
            _U.list([A2($Graphics$Element.spacer,w,1)
                    ,function (_p3) {
@@ -10035,32 +10072,26 @@ Elm.ElmTest.Runner.Element.make = function (_elm) {
    var runDisplay = function (tests) {
       var _p6 = $ElmTest$Runner$String.run(tests);
       if (_p6.ctor === "::" && _p6._0.ctor === "_Tuple2") {
-            var _p10 = _p6._1;
-            var results$ = A2($List.map,pretty,_p10);
+            var _p8 = _p6._1;
+            var results$ = A2($List.map,pretty,_p8);
             var maxWidth = function (_p7) {
                return maxOrZero(A2($List.map,
                $Graphics$Element.widthOf,
                _p7));
             }(results$);
-            var maxHeight = function (_p8) {
-               return maxOrZero(A2($List.map,
-               $Graphics$Element.heightOf,
-               _p8));
-            }(results$);
-            var elements = _U.eq(_p10,
+            var separator = A2($Graphics$Element.color,
+            $Color.white,
+            A2($Graphics$Element.spacer,maxWidth,1));
+            var elements = _U.eq(_p8,
             _U.list([{ctor: "_Tuple2"
                      ,_0: ""
-                     ,_1: _p6._0._1}])) ? _U.list([]) : A2($List.map,
-            function (_p9) {
-               return A2($Graphics$Element.color,
-               $Color.black,
-               A4($Graphics$Element.container,
-               maxWidth + 2,
-               maxHeight + 2,
-               $Graphics$Element.midLeft,
-               A2($Graphics$Element.width,maxWidth,_p9)));
+                     ,_1: _p6._0._1}])) ? _U.list([]) : A2($List.intersperse,
+            separator,
+            A2($List.map,
+            function (elem) {
+               return A2($Graphics$Element.width,maxWidth,elem);
             },
-            results$);
+            results$));
             return A2($Graphics$Element.flow,
             $Graphics$Element.down,
             A2($List._op["::"],
@@ -10152,6 +10183,8 @@ Elm.ElmTest.make = function (_elm) {
    var stringRunner = $ElmTest$Runner$String.runDisplay;
    var consoleRunner = $ElmTest$Runner$Console.runDisplay;
    var elementRunner = $ElmTest$Runner$Element.runDisplay;
+   var fail = $ElmTest$Assertion.AlwaysFail;
+   var pass = $ElmTest$Assertion.AlwaysPass;
    var assertionList = $ElmTest$Assertion.assertionList;
    var lazyAssert = $ElmTest$Assertion.assertT;
    var assertNotEqual = $ElmTest$Assertion.assertNotEqual;
@@ -10171,6 +10204,8 @@ Elm.ElmTest.make = function (_elm) {
                                 ,assertNotEqual: assertNotEqual
                                 ,lazyAssert: lazyAssert
                                 ,assertionList: assertionList
+                                ,pass: pass
+                                ,fail: fail
                                 ,elementRunner: elementRunner
                                 ,consoleRunner: consoleRunner
                                 ,stringRunner: stringRunner};
@@ -14512,7 +14547,10 @@ Elm.HtmlToElm.ElmHtmlWhitelists.make = function (_elm) {
                                                ,"pubdate"
                                                ,"manifest"
                                                ,"property"
-                                               ,"attribute"]);
+                                               ,"attribute"
+                                               ,"d"
+                                               ,"fill"
+                                               ,"viewBox"]);
    var implementedTagFunctions = _U.list(["body"
                                          ,"section"
                                          ,"nav"
@@ -14610,7 +14648,11 @@ Elm.HtmlToElm.ElmHtmlWhitelists.make = function (_elm) {
                                          ,"details"
                                          ,"summary"
                                          ,"menuitem"
-                                         ,"menu"]);
+                                         ,"menu"
+                                         ,"defs"
+                                         ,"clipPath"
+                                         ,"path"
+                                         ,"g"]);
    return _elm.HtmlToElm.ElmHtmlWhitelists.values = {_op: _op
                                                     ,implementedTagFunctions: implementedTagFunctions
                                                     ,implementedAttributeFunctions: implementedAttributeFunctions
