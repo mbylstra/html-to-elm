@@ -1,4 +1,7 @@
-module HtmlToElmWebsite.Layout where
+module HtmlToElmWebsite.Layout exposing (..)
+
+-- import Window
+import Html exposing (Html)
 
 topBarHeight = 50
 panelHeaderHeight = 30
@@ -15,10 +18,10 @@ topBarRight =
     [ ("float", "right")
     ]
 
-mainPanel (windowWidth, windowHeight) =
+mainPanel windowSize =
     let
-        width = windowWidth // 2
-        height = windowHeight - topBarHeight
+        width = windowSize.width // 2
+        height = windowSize.height - topBarHeight
     in
         [ ("width", (toString width) ++ "px")
         , ("height", (toString height) ++ "px")
@@ -29,15 +32,16 @@ mainPanel (windowWidth, windowHeight) =
 panelHeader =
     [("height", (toString panelHeaderHeight) ++ "px")]
 
-panelContent (_, windowHeight) =
+panelContent windowSize =
     let
-        height = windowHeight - (topBarHeight + (panelHeaderHeight * 2) )
+        height = windowSize.height - (topBarHeight + (panelHeaderHeight * 2) )
     in
         [("height", (toString height) ++ "px")]
 
 
-leftPanel windowDimensions =
-    mainPanel windowDimensions ++ [("left", "0px")]
-
-rightPanel windowDimensions =
-    mainPanel windowDimensions ++ [("right", "0px")]
+-- leftPanel : Window.Size -> List (Html msg)
+leftPanel windowSize =
+    mainPanel windowSize ++ [("left", "0px")]
+-- rightPanel : Window.Size -> List (Html msg)
+rightPanel windowSize =
+    mainPanel windowSize ++ [("right", "0px")]

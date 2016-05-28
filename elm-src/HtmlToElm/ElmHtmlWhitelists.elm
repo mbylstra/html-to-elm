@@ -1,4 +1,4 @@
-module HtmlToElm.ElmHtmlWhitelists where
+module HtmlToElm.ElmHtmlWhitelists exposing (..)
 
 implementedTagFunctions =
     [
@@ -103,7 +103,7 @@ implementedTagFunctions =
         -- svg specific bellow
         "defs",
         "clipPath",
-        "path", 
+        "path",
         "g"
     ]
 
@@ -210,8 +210,8 @@ implementedAttributeFunctions =
         "property",
         "attribute",
         -- svg specific bellow
-        "d", 
-        "fill", 
+        "d",
+        "fill",
         "viewBox"
     ]
 

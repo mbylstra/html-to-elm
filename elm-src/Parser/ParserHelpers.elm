@@ -1,4 +1,4 @@
-module Parser.ParserHelpers (..) where
+module Parser.ParserHelpers exposing (..)
 
 --------------------------------------------------------------------------------
 -- EXTERNAL DEPENDENCIES
@@ -273,5 +273,5 @@ tests = suite "ParserHelpers.elm"
     ]
 
 
-main =
-    elementRunner tests
+-- main =
+--     elementRunner tests

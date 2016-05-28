@@ -1,4 +1,4 @@
-module HtmlToElm.Util (..) where
+module HtmlToElm.Util exposing (..)
 
 --------------------------------------------------------------------------------
 -- EXTERNAL DEPENDENCIES
@@ -44,5 +44,5 @@ tests = suite "HtmlToElm.elm"
         )
     ]
 
-main =
-    elementRunner tests
+-- main =
+--     elementRunner tests

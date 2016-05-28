@@ -1,9 +1,9 @@
-module HtmlParser.HtmlParser
+module HtmlParser.HtmlParser exposing
     ( parseHtml
     , Node(Element, Text)
-    , main
+    -- , main
     , tests
-    ) where
+    )
 
 
 --------------------------------------------------------------------------------
@@ -456,5 +456,5 @@ tests = suite "HtmlParser.elm"
         )
     ]
 
-main =
-    elementRunner tests
+-- main =
+--     elementRunner tests

@@ -1,4 +1,4 @@
-module HtmlToElm.HtmlToElm (..) where
+module HtmlToElm.HtmlToElm exposing (..)
 
 
 --------------------------------------------------------------------------------
@@ -329,5 +329,5 @@ tests = suite "HtmlToElm.elm"
         )
     ]
 
-main =
-    elementRunner tests
+-- main =
+--     elementRunner tests

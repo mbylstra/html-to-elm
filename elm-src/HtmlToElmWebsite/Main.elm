@@ -1,25 +1,29 @@
-module Main where
+module Main exposing (..)
+
+import Html.App
+
+import Task
 
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Window
-import Debug exposing (..)
+-- import Debug exposing (..)
 import HtmlToElmWebsite.Layout as Layout
 import HtmlToElmWebsite.HtmlComponents exposing (githubStarButton)
 import HtmlToElmWebsite.HtmlExamples exposing (htmlExamples)
 import HtmlToElm.HtmlToElm exposing (htmlToElm)
 
-type alias StringAddress = Signal.Address String
+-- type alias StringAddress = Signal.Address String
 
 
-currHtmlMailbox : Signal.Mailbox String
-currHtmlMailbox =
-  Signal.mailbox ""
+-- currHtmlMailbox : Signal.Mailbox String
+-- currHtmlMailbox =
+--   Signal.mailbox ""
 
 
-topBar : Html
+topBar : Html Msg
 topBar =
     div [ class "top-bar", style Layout.topBar ]
         [ div
@@ -52,24 +56,24 @@ topBar =
         ]
 
 
-snippetButton : String -> Signal.Address Action -> Html
-snippetButton snippetName address =
+snippetButton : String -> Html Msg
+snippetButton snippetName =
     span
         [class "example-button"
-        , onClick address (LoadSnippet snippetName)
+        , onClick (LoadSnippet snippetName)
         ]
         [ text snippetName ]
 
 
-snippetButtons : Signal.Address Action -> List Html
-snippetButtons address =
-    List.map (\key -> snippetButton key address) (Dict.keys htmlExamples)
+snippetButtons : List (Html Msg)
+snippetButtons =
+    List.map (\key -> snippetButton key) (Dict.keys htmlExamples)
 
 
-leftPanel : ( Int, Int ) -> Signal.Address Action -> Html
-leftPanel windowDimensions address =
+leftPanel : Model -> Html Msg
+leftPanel model =
     div
-        [ class "left-panel", style <| Layout.leftPanel windowDimensions ]
+        [ class "left-panel", style <| Layout.leftPanel model.windowSize ]
         [ div
             [ style Layout.panelHeader
             , class "left-panel-heading"
@@ -78,11 +82,12 @@ leftPanel windowDimensions address =
         , div
             []
             [ textarea
-                [ type' "string"
-                , id "html"
+                [
+                  -- type' "string"
+                  id "html"
                 , placeholder "input"
                 , name "points"
-                , on "input" targetValue (\v -> Signal.message currHtmlMailbox.address v)  -- this should be an action!
+                -- , on "input" targetValue (\v -> Signal.message currHtmlMailbox.address v)  -- this should be an action!
                 ]
                 [ ]
             ]
@@ -90,11 +95,11 @@ leftPanel windowDimensions address =
             [ style Layout.panelHeader
             , class "left-panel-heading"
             ]
-            ([ text "snippets: " ]  ++  snippetButtons address)
+            ([ text "snippets: " ]  ++  snippetButtons)
         ]
 
 
-copyButton : Bool -> Html
+copyButton : Bool -> Html Msg
 copyButton visible =
     let
         style' = if visible then [] else [("display", "none")]
@@ -104,8 +109,8 @@ copyButton visible =
           [ text "copy"]
 
 
-rightPanel : ( Int, Int ) -> Model -> Signal.Address Action -> Html
-rightPanel windowDimensions model address =
+rightPanel : Model -> Html Msg
+rightPanel model =
 
     let
         hint =
@@ -121,7 +126,7 @@ rightPanel windowDimensions model address =
 
     in
         div
-            [ class "right-panel", style <| Layout.rightPanel windowDimensions]
+            [ class "right-panel", style <| Layout.rightPanel model.windowSize]
             [ div
                 [ style Layout.panelHeader
                 , class "right-panel-heading"
@@ -131,7 +136,7 @@ rightPanel windowDimensions model address =
                 , text ")"
                 ]
             , div
-                [ style <| Layout.panelContent windowDimensions
+                [ style <| Layout.panelContent model.windowSize
                 , class "elm-code"
                 ]
                 [ hint
@@ -144,12 +149,12 @@ rightPanel windowDimensions model address =
                 [ text "indent spaces: "
                 , span
                     [ class "example-button"
-                    , onClick address (SetIndentSpaces 2)
+                    , onClick (SetIndentSpaces 2)
                     ]
                     [text "2"]
                 , span
                     [class "example-button"
-                    , onClick address (SetIndentSpaces 4)
+                    , onClick (SetIndentSpaces 4)
                     ]
                     [text "4"]
                 ]
@@ -157,44 +162,50 @@ rightPanel windowDimensions model address =
             , copyButton True
             ]
 
-type Action =
+type Msg =
     LoadSnippet String
     | SetIndentSpaces Int
     | HtmlUpdated String
+    | WindowSizeChanged Window.Size
+    | NoOp
 
 
-actionsMailbox : Signal.Mailbox (Maybe Action)
-actionsMailbox = Signal.mailbox Nothing
+-- actionsMailbox : Signal.Mailbox (Maybe Msg)
+-- actionsMailbox = Signal.mailbox Nothing
 
 
-actionsAddress : Signal.Address Action
-actionsAddress =
-  Signal.forwardTo actionsMailbox.address Just
+-- actionsAddress : Signal.Address Msg
+-- actionsAddress =
+--   Signal.forwardTo actionsMailbox.address Just
 
 
-updateFunc : Maybe Action -> Model   ->   Model
-updateFunc maybeAction model =
-    case maybeAction of
-        Just action ->
-            case action of
-                HtmlUpdated html ->
-                    { model |
-                      html = html
-                    , elmCode = (htmlToElm 4) html
-                    }
-                LoadSnippet snippetName ->
-                    { model |
-                      currentSnippet =
-                          case (Dict.get snippetName htmlExamples) of
-                              Just snippet -> snippet
-                              Nothing -> ""
-                    }
-                SetIndentSpaces indentSpaces ->
-                    { model |
-                      indentSpaces = indentSpaces
-                    }
-        Nothing ->
-            Debug.crash "This should never happen."
+update : Msg -> Model   ->   (Model, Cmd Msg)
+update msg model =
+    case msg of
+        HtmlUpdated html ->
+            { model |
+              html = html
+            , elmCode = (htmlToElm 4) html
+            } ! []
+        LoadSnippet snippetName ->
+            { model |
+              currentSnippet =
+                  case (Dict.get snippetName htmlExamples) of
+                      Just snippet -> snippet
+                      Nothing -> ""
+            } ! []
+        SetIndentSpaces indentSpaces ->
+            { model |
+              indentSpaces = indentSpaces
+            } ! []
+        WindowSizeChanged size ->
+            { model | windowSize = size } ! []
+        NoOp ->
+          model ! []
+
+
+        -- Nothing ->
+        --     Debug.crash "This should never happen."
 
 
 type alias Model =
@@ -202,6 +213,7 @@ type alias Model =
     , elmCode: Maybe String
     , indentSpaces : Int
     , currentSnippet : String
+    , windowSize : Window.Size
     }
 
 
@@ -211,51 +223,69 @@ initialModel =
     , elmCode = Just ""
     , indentSpaces = 4
     , currentSnippet = ""
+    , windowSize = { width = 1000, height = 1000 }
     }
 
 
-actionsModelSignal : Signal Model
-actionsModelSignal =
-    Signal.foldp updateFunc initialModel actionsMailbox.signal
+-- actionsModelSignal : Signal Model
+-- actionsModelSignal =
+--     Signal.foldp updateFunc initialModel actionsMailbox.signal
 
 
-modelSignal : Signal Model
-modelSignal =
-    let
-        reducer actionsModel htmlCode =
-            let
-                elmCode = htmlToElm actionsModel.indentSpaces htmlCode
-            in
-                { actionsModel |
-                  elmCode = elmCode
-                }
-    in
-        Signal.map2 reducer actionsModelSignal incomingHtmlCodeSignal
+-- modelSignal : Signal Model
+-- modelSignal =
+--     let
+--         reducer actionsModel htmlCode =
+--             let
+--                 elmCode = htmlToElm actionsModel.indentSpaces htmlCode
+--             in
+--                 { actionsModel |
+--                   elmCode = elmCode
+--                 }
+--     in
+--         Signal.map2 reducer actionsModelSignal incomingHtmlCodeSignal
 
 
-main : Signal Html
-main =
-  Signal.map2 (view actionsAddress) modelSignal Window.dimensions
+-- main : Signal Html
+-- main =
+--   Signal.map2 (view actionsAddress) modelSignal Window.dimensions
 
 
-view : Signal.Address Action -> Model -> (Int, Int)  ->   Html
-view actionAddress model windowDimensions =
+view : Model -> Html Msg
+view model =
   div [ ]
     [ topBar
     , div []
-        [ leftPanel windowDimensions actionAddress
-        , rightPanel windowDimensions model actionAddress
+        [ leftPanel model
+        , rightPanel model
         ]
     ]
 
 
-port incomingHtmlCodeSignal : Signal (String)
+-- port incomingHtmlCodeSignal : Signal (String)
 
-port outgoingElmCode : Signal (Maybe String)
-port outgoingElmCode = Signal.map .elmCode modelSignal
+-- port outgoingElmCode : Signal (Maybe String)
+-- port outgoingElmCode = Signal.map .elmCode modelSignal
 
-port windowHeight : Signal Int
-port windowHeight = Window.height
+-- port windowHeight : Signal Int
+-- port windowHeight = Window.height
 
-port currentSnippet : Signal String
-port currentSnippet = Signal.dropRepeats (Signal.map .currentSnippet modelSignal)
+-- port currentSnippet : Signal String
+-- port currentSnippet = Signal.dropRepeats (Signal.map .currentSnippet modelSignal)
+
+
+
+
+
+main : Program Never
+main =
+  Html.App.program
+    { init = initialModel ! [ Task.perform (\_ -> NoOp) (\size -> WindowSizeChanged size) Window.size ]
+    , update = update
+    , view = view
+    , subscriptions = subscriptions
+    }
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Window.resizes (\size -> WindowSizeChanged size)

@@ -1,4 +1,4 @@
-module Parser.Tokenizer(..) where
+module Parser.Tokenizer exposing (..)
 
 
 --------------------------------------------------------------------------------
@@ -170,5 +170,5 @@ tests = suite "Tokenizer.elm"
     ]
 
 
-main =
-    elementRunner tests
+-- main =
+--     elementRunner tests

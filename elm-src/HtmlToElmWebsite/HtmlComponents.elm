@@ -1,9 +1,9 @@
-module HtmlToElmWebsite.HtmlComponents where
+module HtmlToElmWebsite.HtmlComponents exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 
-githubForkRibbon : String -> Html
+githubForkRibbon : String -> Html msg
 githubForkRibbon url =
     a
         [ href "https://github.com/mbylstra/html-to-elm" ]
@@ -15,6 +15,14 @@ githubForkRibbon url =
             []
         ]
 
+githubStarButton :
+  { size : String
+  , user : String
+  , type' : String
+  , repo: String
+  , style : List (String, String)
+  }
+  -> Html msg
 githubStarButton params =
     let
         url =

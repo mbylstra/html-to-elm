@@ -1,4 +1,4 @@
-module Parser.Parser
+module Parser.Parser exposing
     ( ParseFunction
     , createParseTokenIgnoreFunction
     , createParseTokenKeepFunction
@@ -12,9 +12,9 @@ module Parser.Parser
     , labelled
     , optional
     , ignore
-    , main
+    -- , main
     , tests
-    ) where
+    )
 
 
 --------------------------------------------------------------------------------
@@ -556,4 +556,4 @@ tests = suite "Parser.elm"
         )
     ]
 
-main = elementRunner tests
+-- main = elementRunner tests

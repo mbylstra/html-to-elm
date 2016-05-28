@@ -1,9 +1,8 @@
-module HtmlParser.HtmlParserRawAst
+module HtmlParser.HtmlParserRawAst exposing
     ( xhtmlToRawAst
-    , main
+    -- , main
     , tests
     )
-    where
 
 
 --------------------------------------------------------------------------------
@@ -63,7 +62,7 @@ parseTagAttributeValue =
             , parseForwardSlashKeep
             , parseEqualsSignKeep
             ]
-        , createParseAnyFunction 
+        , createParseAnyFunction
             [ parseDoubleQuotationMarkIgnore
             , parseSingleQuotationMarkIgnore
             ]
@@ -135,6 +134,7 @@ parseTextNode =
         , parseDashKeep
         , parseEqualsSignKeep
         , parseDoubleQuotationMarkKeep
+        -- , parseSingleQuotationMarkKeep
         , parseForwardSlashKeep
         , parseDashKeep
         , parseRightAngleBracketKeep
@@ -422,5 +422,5 @@ tests = suite "HtmlParser.elm"
         )
     ]
 
-main =
-    elementRunner tests
+-- main =
+--     elementRunner tests
