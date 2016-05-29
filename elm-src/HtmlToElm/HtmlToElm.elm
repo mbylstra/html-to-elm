@@ -329,5 +329,5 @@ tests = suite "HtmlToElm.elm"
         )
     ]
 
--- main =
---     elementRunner tests
+main =
+    runSuiteHtml tests

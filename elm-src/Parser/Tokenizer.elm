@@ -170,5 +170,5 @@ tests = suite "Tokenizer.elm"
     ]
 
 
--- main =
---     elementRunner tests
+main =
+    runSuiteHtml tests

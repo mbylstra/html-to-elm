@@ -273,5 +273,5 @@ tests = suite "ParserHelpers.elm"
     ]
 
 
--- main =
---     elementRunner tests
+main =
+    runSuiteHtml tests
