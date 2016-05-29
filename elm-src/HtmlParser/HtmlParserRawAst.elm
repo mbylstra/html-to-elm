@@ -134,7 +134,7 @@ parseTextNode =
         , parseDashKeep
         , parseEqualsSignKeep
         , parseDoubleQuotationMarkKeep
-        -- , parseSingleQuotationMarkKeep
+        , parseSingleQuotationMarkKeep
         , parseForwardSlashKeep
         , parseDashKeep
         , parseRightAngleBracketKeep

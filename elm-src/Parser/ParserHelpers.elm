@@ -43,6 +43,7 @@ parseForwardSlashKeep = createParseTokenKeepFunction ForwardSlash
 parseEqualsSignKeep = createParseTokenKeepFunction EqualsSign
 parseWhitespaceKeep = createParseTokenKeepFunction Whitespace
 parseDoubleQuotationMarkKeep = createParseTokenKeepFunction DoubleQuotationMark
+parseSingleQuotationMarkKeep = createParseTokenKeepFunction SingleQuotationMark
 parseExclamationMarkKeep = createParseTokenKeepFunction ExclamationMark
 parseDashKeep = createParseTokenKeepFunction Dash
 parseWordKeep = createParseTokenKeepFunction Word
