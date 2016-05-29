@@ -11505,7 +11505,7 @@ var _user$project$Main$initialModel = {
 	elmCode: _elm_lang$core$Maybe$Just(''),
 	indentSpaces: 4,
 	currentSnippet: '',
-	windowSize: {width: 1000, height: 1000}
+	windowSize: {width: 1000, height: 20}
 };
 var _user$project$Main$copyButton = function (visible) {
 	var style$ = visible ? _elm_lang$core$Native_List.fromArray(
@@ -11622,11 +11622,17 @@ var _user$project$Main$currentSnippet = _elm_lang$core$Native_Platform.outgoingP
 	function (v) {
 		return v;
 	});
+var _user$project$Main$elmDomReady = _elm_lang$core$Native_Platform.outgoingPort(
+	'elmDomReady',
+	function (v) {
+		return v;
+	});
 var _user$project$Main$Model = F5(
 	function (a, b, c, d, e) {
 		return {html: a, elmCode: b, indentSpaces: c, currentSnippet: d, windowSize: e};
 	});
 var _user$project$Main$NoOp = {ctor: 'NoOp'};
+var _user$project$Main$ElmDomReady = {ctor: 'ElmDomReady'};
 var _user$project$Main$WindowSizeChanged = function (a) {
 	return {ctor: 'WindowSizeChanged', _0: a};
 };
@@ -11693,6 +11699,14 @@ var _user$project$Main$update = F2(
 						{windowSize: _p0._0}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
+			case 'ElmDomReady':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$Main$elmDomReady('')
+						]));
 			default:
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -11935,7 +11949,14 @@ var _user$project$Main$main = {
 						function (size) {
 							return _user$project$Main$WindowSizeChanged(size);
 						},
-						_elm_lang$window$Window$size)
+						_elm_lang$window$Window$size),
+						A3(
+						_elm_lang$core$Task$perform,
+						function (_p6) {
+							return _user$project$Main$NoOp;
+						},
+						_elm_lang$core$Basics$identity,
+						_elm_lang$core$Task$succeed(_user$project$Main$ElmDomReady))
 					])),
 			update: _user$project$Main$update,
 			view: _user$project$Main$view,

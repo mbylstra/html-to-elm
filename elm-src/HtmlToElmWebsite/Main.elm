@@ -167,6 +167,7 @@ type Msg =
     | SetIndentSpaces Int
     | HtmlUpdated String
     | WindowSizeChanged Window.Size
+    | ElmDomReady
     | NoOp
 
 
@@ -208,6 +209,9 @@ update msg model =
                 [ Task.perform (\_ -> NoOp) identity (Task.succeed (HtmlUpdated model.html)) ]
         WindowSizeChanged size ->
             { model | windowSize = size } ! []
+        ElmDomReady ->
+          model !
+            [ elmDomReady "" ]
         NoOp ->
           model ! []
 
@@ -231,7 +235,7 @@ initialModel =
     , elmCode = Just ""
     , indentSpaces = 4
     , currentSnippet = ""
-    , windowSize = { width = 1000, height = 1000 }
+    , windowSize = { width = 1000, height = 20 }
     }
 
 
@@ -286,7 +290,10 @@ view model =
 main : Program Never
 main =
   Html.App.program
-    { init = initialModel ! [ Task.perform (\_ -> NoOp) (\size -> WindowSizeChanged size) Window.size ]
+    { init = initialModel !
+      [ Task.perform (\_ -> NoOp) (\size -> WindowSizeChanged size) Window.size
+      , Task.perform (\_ -> NoOp) identity (Task.succeed ElmDomReady)
+      ]
     , update = update
     , view = view
     , subscriptions = subscriptions
@@ -309,4 +316,5 @@ port incomingHtmlCode : (String -> msg) -> Sub msg
 port outgoingElmCode : Maybe String -> Cmd msg
 
 port currentSnippet : String -> Cmd msg
--- port currentSnippet = Signal.dropRepeats (Signal.map .currentSnippet modelSignal)
+
+port elmDomReady : String -> Cmd msg
