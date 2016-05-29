@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html.App
 
@@ -181,23 +181,31 @@ type Msg =
 
 update : Msg -> Model   ->   (Model, Cmd Msg)
 update msg model =
-    case msg of
+    case Debug.log "msg" msg of
         HtmlUpdated html ->
-            { model |
-              html = html
-            , elmCode = (htmlToElm 4) html
-            } ! []
+            let
+              elmCode = (htmlToElm model.indentSpaces) html
+            in
+              { model |
+                html = html
+              , elmCode = elmCode
+              } ! [ outgoingElmCode elmCode ]
         LoadSnippet snippetName ->
-            { model |
-              currentSnippet =
+            let
+              snippet =
                   case (Dict.get snippetName htmlExamples) of
-                      Just snippet -> snippet
+                      Just snippet' -> snippet'
                       Nothing -> ""
-            } ! []
+
+            in
+              { model | currentSnippet = snippet }
+              ! [ currentSnippet snippet ]
         SetIndentSpaces indentSpaces ->
-            { model |
-              indentSpaces = indentSpaces
-            } ! []
+            let
+              newModel = { model | indentSpaces = indentSpaces }
+            in
+              newModel !
+                [ Task.perform (\_ -> NoOp) identity (Task.succeed (HtmlUpdated model.html)) ]
         WindowSizeChanged size ->
             { model | windowSize = size } ! []
         NoOp ->
@@ -270,8 +278,6 @@ view model =
 -- port windowHeight : Signal Int
 -- port windowHeight = Window.height
 
--- port currentSnippet : Signal String
--- port currentSnippet = Signal.dropRepeats (Signal.map .currentSnippet modelSignal)
 
 
 
@@ -288,4 +294,19 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Window.resizes (\size -> WindowSizeChanged size)
+  -- suggestions Suggest
+  incomingHtmlCode HtmlUpdated
+
+-- subscriptions model =
+--   Window.resizes (\size -> WindowSizeChanged size)
+
+
+
+
+port incomingHtmlCode : (String -> msg) -> Sub msg
+-- port suggestions : (List String -> msg) -> Sub msg
+
+port outgoingElmCode : Maybe String -> Cmd msg
+
+port currentSnippet : String -> Cmd msg
+-- port currentSnippet = Signal.dropRepeats (Signal.map .currentSnippet modelSignal)
