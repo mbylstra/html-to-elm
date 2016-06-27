@@ -11791,12 +11791,12 @@ var _user$project$Main$rightPanel = function (model) {
 						_elm_lang$html$Html$a,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$href('https://github.com/evancz/elm-html'),
+								_elm_lang$html$Html_Attributes$href('https://github.com/elm-lang/html'),
 								_elm_lang$html$Html_Attributes$target('_blank')
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html$text('elm-html')
+								_elm_lang$html$Html$text('elm-lang/html')
 							])),
 						_elm_lang$html$Html$text(')')
 					])),
