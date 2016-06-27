@@ -132,7 +132,7 @@ rightPanel model =
                 , class "right-panel-heading"
                 ]
                 [ text "Elm code appears here (see "
-                , a [href "https://github.com/evancz/elm-html", target "_blank"] [ text "elm-html"]
+                , a [href "https://github.com/elm-lang/html", target "_blank"] [ text "elm-lang/html"]
                 , text ")"
                 ]
             , div
