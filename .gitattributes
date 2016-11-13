@@ -1,2 +1,3 @@
 website/* linguist-vendored
 elm.js linguist-vendored=true
+linguist.rb linguist-vendored=true
