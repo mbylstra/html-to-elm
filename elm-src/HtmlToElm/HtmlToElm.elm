@@ -6,7 +6,7 @@ module HtmlToElm.HtmlToElm exposing (..)
 --------------------------------------------------------------------------------
 import Dict exposing (Dict)
 import String
-import ElmTest exposing (..)
+import Legacy.ElmTest exposing (..)
 import Maybe exposing (Maybe)
 import Regex exposing (regex)
 
@@ -46,7 +46,7 @@ renderAttribute (key, value) =
         if
             List.member key reservedWords
         then
-            key ++ "' " ++ "\"" ++ value ++ "\""
+            key ++ "_ " ++ "\"" ++ value ++ "\""
         else
             "attribute \"" ++ key ++ "\""  ++ " \"" ++ value ++ "\""
 -- TODO: look this app in the attributes whitelist
@@ -80,10 +80,10 @@ renderTextNode node =
     case node of
         Text text ->
             let
-                text' = text |> removeNewlines |> escapeDoubleQuotes
+                text_ = text |> removeNewlines |> escapeDoubleQuotes
 
             in
-                "text \"" ++ text' ++ "\""
+                "text \"" ++ text_ ++ "\""
         _ ->
             Debug.crash("")
 
@@ -98,7 +98,7 @@ renderTagFunctionHead tagName =
         if
             List.member tagName reservedWords
         then
-            tagName ++ "'"
+            tagName ++ "_"
         else
             "node \""  ++ tagName ++ "\""
 
@@ -136,29 +136,29 @@ renderNode node =
 indentTreeStrings : Int -> IndentTree   ->   IndentTree
 indentTreeStrings spacesPerIndent originalTree =
     let
-        indentTreeStrings' depth currTree =
+        indentTreeStrings_ depth currTree =
             let indentLevel = depth // 2  -- we only want to increase the indent every second second level we go down the tree
             in
             case currTree of
                 IndentTreeLeaf s ->
                     IndentTreeLeaf (indent spacesPerIndent indentLevel s)
                 IndentTrees trees ->
-                    IndentTrees (List.map (indentTreeStrings' (depth + 1)) trees)
+                    IndentTrees (List.map (indentTreeStrings_ (depth + 1)) trees)
     in
-        indentTreeStrings' 0 originalTree
+        indentTreeStrings_ 0 originalTree
 
 
 flattenIndentTree : IndentTree -> List String
 flattenIndentTree indentTree =
     let
-        flattenIndentTree' : IndentTree -> List String   ->   List String
-        flattenIndentTree' indentTree acc =
+        flattenIndentTree_ : IndentTree -> List String   ->   List String
+        flattenIndentTree_ indentTree acc =
             (flattenIndentTree indentTree) ++ acc
     in
         case indentTree of
             IndentTreeLeaf s -> [s]
             IndentTrees trees ->
-                List.foldr flattenIndentTree' [] trees
+                List.foldr flattenIndentTree_ [] trees
 
 
 htmlNodeToElm : Int -> Node   ->   String
@@ -185,8 +185,8 @@ formatHaskellMultilineList indentTrees =
     -- 3 append a line with "]"
     let
         transformHeadLine : IndentTree -> IndentTree
-        transformHeadLine indentTree' =
-            case indentTree' of
+        transformHeadLine indentTree_ =
+            case indentTree_ of
                 IndentTreeLeaf s ->
                     IndentTreeLeaf <| "[ " ++ s
                 IndentTrees (headTree::tailTrees) ->
@@ -195,8 +195,8 @@ formatHaskellMultilineList indentTrees =
                     Debug.crash("")
 
         transformTailLine : IndentTree -> IndentTree
-        transformTailLine indentTree' =
-            case indentTree' of
+        transformTailLine indentTree_ =
+            case indentTree_ of
                 IndentTreeLeaf s ->
                     IndentTreeLeaf <| ", " ++ s
                 IndentTrees (headTree::tailTrees) ->

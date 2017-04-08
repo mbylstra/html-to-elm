@@ -21,7 +21,7 @@ module Parser.Parser exposing
 -- EXTERNAL DEPENDENCIES
 --------------------------------------------------------------------------------
 
-import ElmTest exposing (..)
+import Legacy.ElmTest exposing (..)
 
 
 --------------------------------------------------------------------------------
@@ -118,8 +118,8 @@ createParseTokenKeepFunction tokenType =
 labelled :   String -> ParseFunction   ->   ParseFunction
 labelled label parseFunction =
     let
-        parseFunction' : ParseFunction
-        parseFunction' tokens =
+        parseFunction_ : ParseFunction
+        parseFunction_ tokens =
             let
                 result = parseFunction tokens
             in
@@ -131,7 +131,7 @@ labelled label parseFunction =
 
                     _ -> result  -- no need to change anything if empty result returned
     in
-        parseFunction'
+        parseFunction_
 
 ignore    :    ParseFunction -> ParseFunction
 ignore parseFunction =
@@ -158,7 +158,7 @@ optional parseFunction =
 createParseAnyFunction : ParseFunctions -> ParseFunction
 createParseAnyFunction parseFunctions =
     let
-        parseAny' tokens = parseAny parseFunctions tokens
+        parseAny_ tokens = parseAny parseFunctions tokens
 
         parseAny    :   ParseFunctions -> Tokens   ->   (ParseResult, RemainderTokens)
         parseAny parseFunctions tokens =
@@ -173,37 +173,37 @@ createParseAnyFunction parseFunctions =
                         (ParseMatchesReturnsResult result, remainderTokens) ->
                             (ParseMatchesReturnsResult result, remainderTokens)
     in
-        parseAny'
+        parseAny_
 
 
 createOptionallyParseMultipleFunction : ParseFunction -> ParseFunction
 createOptionallyParseMultipleFunction repeatedParseFunction =
     let
-        parseMultiple' : ParseFunction
-        parseMultiple' tokens =
+        parseMultiple_ : ParseFunction
+        parseMultiple_ tokens =
             case tokens of
                 [] ->
                     (ParseMatchesReturnsResult <| UnlabelledAstNode <| AstChildren [], tokens)
                 _ ->
                     let
-                        (astNodes, remainderTokens) = parseMultiple'' [] tokens
+                        (astNodes, remainderTokens) = parseMultiple__ [] tokens
                     in
                         ( ParseMatchesReturnsResult <| UnlabelledAstNode <| AstChildren astNodes
                         , remainderTokens
                         )
 
-        parseMultiple'' : AstNodes -> RemainderTokens   ->   (AstNodes, RemainderTokens)
-        parseMultiple'' accAstNodes remainderTokens =
+        parseMultiple__ : AstNodes -> RemainderTokens   ->   (AstNodes, RemainderTokens)
+        parseMultiple__ accAstNodes remainderTokens =
             case repeatedParseFunction remainderTokens of
                 (ParseMatchesReturnsResult extraAstNode, remainderRemainderTokens) ->
-                    parseMultiple'' (accAstNodes ++ [extraAstNode]) remainderRemainderTokens
+                    parseMultiple__ (accAstNodes ++ [extraAstNode]) remainderRemainderTokens
                 (ParseMatchesReturnsNothing, remainderRemainderTokens) ->
-                    parseMultiple'' accAstNodes remainderRemainderTokens
+                    parseMultiple__ accAstNodes remainderRemainderTokens
                 (ParseDoesNotMatch, remainderRemainderTokens) ->
                     (accAstNodes, remainderRemainderTokens)
 
     in
-        parseMultiple'
+        parseMultiple_
 
 
 createParseSequenceFunction : ParseFunctions -> ParseFunction
@@ -212,20 +212,20 @@ createParseSequenceFunction parseFunctions  =
         parseSequence : ParseFunction
         parseSequence tokens =
             let
-                parseSequence' : ParseFunctions -> AstNodes -> RemainderTokens -> (ParseResult, RemainderTokens)
-                parseSequence' remainderParseFunctions accAstNodes remainderTokens =
+                parseSequence_ : ParseFunctions -> AstNodes -> RemainderTokens -> (ParseResult, RemainderTokens)
+                parseSequence_ remainderParseFunctions accAstNodes remainderTokens =
                     case remainderParseFunctions of
                         [] ->
                             (ParseMatchesReturnsResult <| UnlabelledAstNode <| AstChildren accAstNodes, remainderTokens)
                         parseFunction::tailParseFunctions ->
                             case parseFunction remainderTokens of
                                 (ParseMatchesReturnsNothing, remainderRemainderTokens) ->
-                                    parseSequence'
+                                    parseSequence_
                                         tailParseFunctions
                                         accAstNodes
                                         remainderRemainderTokens
                                 (ParseMatchesReturnsResult extraChildNode, remainderRemainderTokens) ->
-                                    parseSequence'
+                                    parseSequence_
                                         tailParseFunctions
                                         (accAstNodes ++ [extraChildNode])
                                         remainderRemainderTokens
@@ -235,7 +235,7 @@ createParseSequenceFunction parseFunctions  =
             in
                 case tokens of
                     [] -> (ParseDoesNotMatch, [])
-                    _ -> parseSequence' parseFunctions [] tokens
+                    _ -> parseSequence_ parseFunctions [] tokens
 
     in
         parseSequence
@@ -246,7 +246,7 @@ createParseAtLeastOneFunction parseFunction =
     let
         parseAtLeastOne tokens =
             let
-                (messyResult, remainderTokens) = parseAtLeastOne' tokens
+                (messyResult, remainderTokens) = parseAtLeastOne_ tokens
             in
                 (cleanUpMessyResult messyResult, remainderTokens)
 
@@ -255,7 +255,7 @@ createParseAtLeastOneFunction parseFunction =
             , createOptionallyParseMultipleFunction parseFunction
             ]
 
-        parseAtLeastOne' tokens = sequenceFunction tokens
+        parseAtLeastOne_ tokens = sequenceFunction tokens
 
         cleanUpMessyResult messyResult =
             case messyResult of
@@ -272,13 +272,13 @@ createParseAtLeastOneFunction parseFunction =
 
                                 _ ->
                                     Debug.crash("")
-                        split' children =
+                        split_ children =
                             case children of
                                 a::b::_ ->
                                     (a,b)
                                 _ ->
                                     Debug.crash("")
-                        (headNode, tailMess) = split' (getChildren messyNode)
+                        (headNode, tailMess) = split_ (getChildren messyNode)
                         tailNodes = getChildren tailMess
                         allNodes = [headNode] ++ tailNodes
                     in

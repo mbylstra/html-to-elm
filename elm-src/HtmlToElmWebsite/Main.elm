@@ -1,7 +1,5 @@
 port module Main exposing (..)
 
-import Html.App
-
 import Task
 
 import Dict
@@ -47,7 +45,7 @@ topBar =
                 , githubStarButton
                     { user="mbylstra"
                     , repo="html-to-elm"
-                    , type'="star"
+                    , type_="star"
                     , size="small"
                     , style=[("vertical-align", "middle"), ("margin-top", "-5px")]
                     }
@@ -83,7 +81,7 @@ leftPanel model =
             []
             [ textarea
                 [
-                  -- type' "string"
+                  -- type_ "string"
                   id "html"
                 , placeholder "input"
                 , name "points"
@@ -102,10 +100,10 @@ leftPanel model =
 copyButton : Bool -> Html Msg
 copyButton visible =
     let
-        style' = if visible then [] else [("display", "none")]
+        style_ = if visible then [] else [("display", "none")]
     in
         div
-          [ id "copy-button",  style style', class "copy-button" ]
+          [ id "copy-button",  style style_, class "copy-button" ]
           [ text "copy"]
 
 
@@ -195,7 +193,7 @@ update msg model =
             let
               snippet =
                   case (Dict.get snippetName htmlExamples) of
-                      Just snippet' -> snippet'
+                      Just snippet_ -> snippet_
                       Nothing -> ""
 
             in
@@ -206,7 +204,7 @@ update msg model =
               newModel = { model | indentSpaces = indentSpaces }
             in
               newModel !
-                [ Task.perform (\_ -> NoOp) identity (Task.succeed (HtmlUpdated model.html)) ]
+                [ Task.perform identity (Task.succeed (HtmlUpdated model.html)) ]
         WindowSizeChanged size ->
             { model | windowSize = size } ! []
         ElmDomReady ->
@@ -287,12 +285,12 @@ view model =
 
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
-  Html.App.program
+  Html.program
     { init = initialModel !
-      [ Task.perform (\_ -> NoOp) (\size -> WindowSizeChanged size) Window.size
-      , Task.perform (\_ -> NoOp) identity (Task.succeed ElmDomReady)
+      [ Task.perform (\size -> WindowSizeChanged size) Window.size
+      , Task.perform identity (Task.succeed ElmDomReady)
       ]
     , update = update
     , view = view

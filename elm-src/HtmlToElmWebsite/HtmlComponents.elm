@@ -18,7 +18,7 @@ githubForkRibbon url =
 githubStarButton :
   { size : String
   , user : String
-  , type' : String
+  , type_ : String
   , repo: String
   , style : List (String, String)
   }
@@ -31,7 +31,7 @@ githubStarButton params =
             ++ "&repo="
             ++ params.repo
             ++ "&type="
-            ++ params.type'
+            ++ params.type_
             ++ "&count=true&size="
             ++ params.size
         iframeWidth = if params.size == "small" then 170 else 160
