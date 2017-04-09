@@ -10,7 +10,7 @@ module HtmlParser.HtmlParser exposing
 -- EXTERNAL DEPENDENCIES
 --------------------------------------------------------------------------------
 import Dict exposing (Dict)
-import ElmTest exposing (..)
+import Legacy.ElmTest exposing (..)
 import Maybe exposing (Maybe)
 
 
@@ -178,8 +178,8 @@ flatAstToTree openingTagAstNode astNodes =
     let
         initialNode = convertOpeningTag openingTagAstNode
 
-        flatAstToTree' : Node -> List AstNode   ->   (Node, List AstNode)
-        flatAstToTree' currNode remainderAstNodes =
+        flatAstToTree_ : Node -> List AstNode   ->   (Node, List AstNode)
+        flatAstToTree_ currNode remainderAstNodes =
             case remainderAstNodes of
                 -- if we run out of astNodes before we find the closing tag,
                 -- doesn't matter, just return. No need for
@@ -192,13 +192,13 @@ flatAstToTree openingTagAstNode astNodes =
                             let
                                 newNode = appendNode currNode (convertTextNode currAstNode)
                             in
-                                flatAstToTree' newNode tailAstNodes
+                                flatAstToTree_ newNode tailAstNodes
                         OpeningTagAstNode ->
                             let
-                                (elementNode, remainderAstNodes') = flatAstToTree currAstNode tailAstNodes
+                                (elementNode, remainderAstNodes_) = flatAstToTree currAstNode tailAstNodes
                                 newNode = appendNode currNode elementNode
                             in
-                                flatAstToTree' newNode remainderAstNodes'
+                                flatAstToTree_ newNode remainderAstNodes_
                         ClosingTagAstNode ->
                             -- Here we get the tag name of the closing tag.
                             -- It should match currNode tagname.
@@ -209,9 +209,9 @@ flatAstToTree openingTagAstNode astNodes =
                             let
                                 newNode = appendNode currNode (convertSelfClosingTag currAstNode)
                             in
-                                flatAstToTree' newNode tailAstNodes
+                                flatAstToTree_ newNode tailAstNodes
 
-        result = flatAstToTree' initialNode astNodes
+        result = flatAstToTree_ initialNode astNodes
     in
         result
 
@@ -327,7 +327,7 @@ assumeParseSuccess parseResult =
 assumeSuccess : Maybe a -> a
 assumeSuccess x =
     case x of
-        Just x' -> x'
+        Just x_ -> x_
         _ -> Debug.crash("")
 
 simpleHtmlResult = xhtmlToRawAst "<h1>hello world</h1>"

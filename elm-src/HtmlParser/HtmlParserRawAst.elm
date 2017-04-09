@@ -9,7 +9,7 @@ module HtmlParser.HtmlParserRawAst exposing
 -- EXTERNAL DEPENDENCIES
 --------------------------------------------------------------------------------
 
-import ElmTest exposing (..)
+import Legacy.ElmTest exposing (..)
 
 
 --------------------------------------------------------------------------------

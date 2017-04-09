@@ -5,7 +5,7 @@ module Parser.Tokenizer exposing (..)
 -- EXTERNAL DEPENDENCIES
 --------------------------------------------------------------------------------
 
-import ElmTest exposing (..)
+import Legacy.ElmTest exposing (..)
 import Maybe exposing (Maybe(Just, Nothing))
 import Regex exposing (..)
 
@@ -81,16 +81,16 @@ tokenizerGrammar = specialSequences ++ reservedCharTokenLookup ++ wildcards
 consumeToken : TokenRecipe -> String   ->   Maybe (Token, RemainderString)
 consumeToken (tokenType, regexString) s =
     let
-        regexString' = "^" ++ regexString
-        regex' = regex regexString'
+        regexString_ = "^" ++ regexString
+        regex_ = regex regexString_
     in
-        case find (AtMost 1) regex' s of
+        case find (AtMost 1) regex_ s of
             [] ->
                 Nothing
             match::_ ->
                 let
                     token = (tokenType, match.match)
-                    remainder = replace (AtMost 1) regex' (\_ -> "") s
+                    remainder = replace (AtMost 1) regex_ (\_ -> "") s
                 in
                     Just (token, remainder)
 
@@ -109,16 +109,16 @@ consumeFirstTokenMatch tokenRecipes s =
 tokenize   :  String   ->   List Token
 tokenize s =
     let
-        tokenize' : List Token -> String   ->   List Token
-        tokenize' accTokens remainderString =
+        tokenize_ : List Token -> String   ->   List Token
+        tokenize_ accTokens remainderString =
             case consumeFirstTokenMatch tokenizerGrammar remainderString of
                 Nothing ->
                     accTokens
                 Just (token, remainderRemainderString) ->
-                    tokenize' (accTokens ++ [token]) remainderRemainderString
+                    tokenize_ (accTokens ++ [token]) remainderRemainderString
 
     in
-        tokenize' [] s
+        tokenize_ [] s
 
 
 

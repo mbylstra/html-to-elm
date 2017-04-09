@@ -116,7 +116,7 @@ implementedAttributeFunctions =
         "classList",
         "id",
         "title",
-        "type'",
+        "type_",
         "value",
         "placeholder",
         "accept",

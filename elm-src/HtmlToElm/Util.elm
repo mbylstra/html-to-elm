@@ -16,14 +16,14 @@ type IndentTree = Leaf String | IndentTrees (List IndentTree)
 flattenIndentTree : IndentTree -> List String
 flattenIndentTree indentTree =
     let
-        flattenIndentTree' : IndentTree -> List String   ->   List String
-        flattenIndentTree' indentTree acc =
+        flattenIndentTree_ : IndentTree -> List String   ->   List String
+        flattenIndentTree_ indentTree acc =
             acc ++ (flattenIndentTree indentTree)
     in
         case indentTree of
             Leaf s -> [s]
             IndentTrees trees ->
-                List.foldl flattenIndentTree' [] trees
+                List.foldl flattenIndentTree_ [] trees
 
 
 testIndentTree1 =  (Leaf "a")

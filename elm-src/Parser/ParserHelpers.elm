@@ -4,7 +4,7 @@ module Parser.ParserHelpers exposing (..)
 -- EXTERNAL DEPENDENCIES
 --------------------------------------------------------------------------------
 
-import ElmTest exposing (..)
+import Legacy.ElmTest exposing (..)
 import List
 
 --------------------------------------------------------------------------------
@@ -130,20 +130,20 @@ flattenAstNode : AstNode -> AstNode
 flattenAstNode astNode =
 
     let
-        flatten' astNode =
+        flatten_ astNode =
             case astNode of
                 UnlabelledAstNode astValue ->
                     case astValue of
                         AstLeaf _ ->
                             [astNode]
                         AstChildren leafNodes ->
-                            List.foldl flatten'' [] leafNodes
+                            List.foldl flatten__ [] leafNodes
                 _ ->
                     Debug.crash("flatten does not support Labelled nodes yet!")
 
-        flatten'' : AstNode -> List AstNode -> List AstNode
-        flatten'' astNode acc =
-            acc ++ (flatten' astNode)
+        flatten__ : AstNode -> List AstNode -> List AstNode
+        flatten__ astNode acc =
+            acc ++ (flatten_ astNode)
 
     in
         case astNode of
@@ -152,7 +152,7 @@ flattenAstNode astNode =
                     AstLeaf leaf ->
                         astNode
                     AstChildren leafNodes ->
-                        UnlabelledAstNode <| AstChildren (flatten' astNode)
+                        UnlabelledAstNode <| AstChildren (flatten_ astNode)
             _ ->
                 Debug.crash("flatten does not support Labelled nodes yet!")
 
