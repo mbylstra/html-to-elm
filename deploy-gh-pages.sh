@@ -1,3 +1,3 @@
-cp -r website/* build
+cp -r website/. build
 git checkout gh-pages
-cp -r build/* .
+cp -r build/. .
