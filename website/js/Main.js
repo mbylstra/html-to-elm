@@ -15002,6 +15002,10 @@ var _user$project$Parser_Tokenizer$consumeFirstTokenMatch = F2(
 			}
 		}
 	});
+var _user$project$Parser_Tokenizer$doubleQuotedStringRegex = function () {
+	var reservedChars = '\"';
+	return '\n        [^\\\"]+\n        ';
+}();
 var _user$project$Parser_Tokenizer$Word = {ctor: 'Word'};
 var _user$project$Parser_Tokenizer$Whitespace = {ctor: 'Whitespace'};
 var _user$project$Parser_Tokenizer$Dash = {ctor: 'Dash'};
@@ -15058,10 +15062,7 @@ var _user$project$Parser_Tokenizer$wordRegex = function () {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
 		'[^',
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			reservedChars,
-			A2(_elm_lang$core$Basics_ops['++'], '\\s', ']+')));
+		A2(_elm_lang$core$Basics_ops['++'], reservedChars, '\\s]+'));
 }();
 var _user$project$Parser_Tokenizer$wildcards = {
 	ctor: '::',
@@ -16813,7 +16814,7 @@ var _user$project$HtmlParser_HtmlParserRawAst$parseClosingTag = A2(
 				}
 			}
 		}));
-var _user$project$HtmlParser_HtmlParserRawAst$parseWordWithDashes = _user$project$Parser_Parser$createParseAtLeastOneFunction(
+var _user$project$HtmlParser_HtmlParserRawAst$parseDoubleQuotedString = _user$project$Parser_Parser$createParseAtLeastOneFunction(
 	_user$project$Parser_Parser$createParseAnyFunction(
 		{
 			ctor: '::',
@@ -16821,7 +16822,35 @@ var _user$project$HtmlParser_HtmlParserRawAst$parseWordWithDashes = _user$projec
 			_1: {
 				ctor: '::',
 				_0: _user$project$Parser_ParserHelpers$parseDashKeep,
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: _user$project$Parser_ParserHelpers$parseLeftAngleBracketKeep,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Parser_ParserHelpers$parseRightAngleBracketKeep,
+						_1: {
+							ctor: '::',
+							_0: _user$project$Parser_ParserHelpers$parseForwardSlashKeep,
+							_1: {
+								ctor: '::',
+								_0: _user$project$Parser_ParserHelpers$parseEqualsSignKeep,
+								_1: {
+									ctor: '::',
+									_0: _user$project$Parser_ParserHelpers$parseWhitespaceKeep,
+									_1: {
+										ctor: '::',
+										_0: _user$project$Parser_ParserHelpers$parseSingleQuotationMarkKeep,
+										_1: {
+											ctor: '::',
+											_0: _user$project$Parser_ParserHelpers$parseExclamationMarkKeep,
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}));
 var _user$project$HtmlParser_HtmlParserRawAst$parseTagAttributeValue = _user$project$Parser_ParserHelpers$flatten(
@@ -16847,20 +16876,8 @@ var _user$project$HtmlParser_HtmlParserRawAst$parseTagAttributeValue = _user$pro
 						_user$project$Parser_Parser$createParseAnyFunction(
 							{
 								ctor: '::',
-								_0: _user$project$HtmlParser_HtmlParserRawAst$parseWordWithDashes,
-								_1: {
-									ctor: '::',
-									_0: _user$project$Parser_ParserHelpers$parseWhitespaceKeep,
-									_1: {
-										ctor: '::',
-										_0: _user$project$Parser_ParserHelpers$parseForwardSlashKeep,
-										_1: {
-											ctor: '::',
-											_0: _user$project$Parser_ParserHelpers$parseEqualsSignKeep,
-											_1: {ctor: '[]'}
-										}
-									}
-								}
+								_0: _user$project$HtmlParser_HtmlParserRawAst$parseDoubleQuotedString,
+								_1: {ctor: '[]'}
 							})),
 					_1: {
 						ctor: '::',
@@ -16877,6 +16894,17 @@ var _user$project$HtmlParser_HtmlParserRawAst$parseTagAttributeValue = _user$pro
 						_1: {ctor: '[]'}
 					}
 				}
+			}
+		}));
+var _user$project$HtmlParser_HtmlParserRawAst$parseWordWithDashes = _user$project$Parser_Parser$createParseAtLeastOneFunction(
+	_user$project$Parser_Parser$createParseAnyFunction(
+		{
+			ctor: '::',
+			_0: _user$project$Parser_ParserHelpers$parseWordKeep,
+			_1: {
+				ctor: '::',
+				_0: _user$project$Parser_ParserHelpers$parseDashKeep,
+				_1: {ctor: '[]'}
 			}
 		}));
 var _user$project$HtmlParser_HtmlParserRawAst$parseTagAttribute = _user$project$Parser_Parser$createParseSequenceFunction(
@@ -17053,7 +17081,7 @@ var _user$project$HtmlParser_HtmlParserRawAst$tests = A2(
 			ctor: '::',
 			_0: A2(
 				_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-				'parse boolean attribute',
+				'parseTagAttribute with single quote in value',
 				A2(
 					_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 					{
@@ -17068,20 +17096,51 @@ var _user$project$HtmlParser_HtmlParserRawAst$tests = A2(
 												{
 													ctor: '::',
 													_0: _user$project$Parser_Parser$UnlabelledAstNode(
-														_user$project$Parser_Parser$AstLeaf('disabled')),
+														_user$project$Parser_Parser$AstLeaf('placeholder')),
 													_1: {ctor: '[]'}
 												})),
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: _user$project$Parser_Parser$UnlabelledAstNode(
+												_user$project$Parser_Parser$AstChildren(
+													{
+														ctor: '::',
+														_0: _user$project$Parser_Parser$UnlabelledAstNode(
+															_user$project$Parser_Parser$AstLeaf('It')),
+														_1: {
+															ctor: '::',
+															_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																_user$project$Parser_Parser$AstLeaf('\'')),
+															_1: {
+																ctor: '::',
+																_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																	_user$project$Parser_Parser$AstLeaf('s')),
+																_1: {
+																	ctor: '::',
+																	_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																		_user$project$Parser_Parser$AstLeaf(' ')),
+																	_1: {
+																		ctor: '::',
+																		_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																			_user$project$Parser_Parser$AstLeaf('great')),
+																		_1: {ctor: '[]'}
+																	}
+																}
+															}
+														}
+													})),
+											_1: {ctor: '[]'}
+										}
 									}))),
 						_1: {ctor: '[]'}
 					},
 					_user$project$HtmlParser_HtmlParserRawAst$parseTagAttribute(
-						_user$project$Parser_Tokenizer$tokenize(' disabled ')))),
+						_user$project$Parser_Tokenizer$tokenize(' placeholder=\"It\'s great\" ')))),
 			_1: {
 				ctor: '::',
 				_0: A2(
 					_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-					'parseMultipleAttributes',
+					'parse boolean attribute',
 					A2(
 						_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 						{
@@ -17091,22 +17150,25 @@ var _user$project$HtmlParser_HtmlParserRawAst$tests = A2(
 									_user$project$Parser_Parser$AstChildren(
 										{
 											ctor: '::',
-											_0: _user$project$HtmlParser_HtmlParserRawAst$attributeId1,
-											_1: {
-												ctor: '::',
-												_0: _user$project$HtmlParser_HtmlParserRawAst$attributeSuccessAwesome,
-												_1: {ctor: '[]'}
-											}
+											_0: _user$project$Parser_Parser$UnlabelledAstNode(
+												_user$project$Parser_Parser$AstChildren(
+													{
+														ctor: '::',
+														_0: _user$project$Parser_Parser$UnlabelledAstNode(
+															_user$project$Parser_Parser$AstLeaf('disabled')),
+														_1: {ctor: '[]'}
+													})),
+											_1: {ctor: '[]'}
 										}))),
 							_1: {ctor: '[]'}
 						},
-						_user$project$HtmlParser_HtmlParserRawAst$parseTagAttributes(
-							_user$project$Parser_Tokenizer$tokenize(' id=\"1\" class=\"success awesome\" ')))),
+						_user$project$HtmlParser_HtmlParserRawAst$parseTagAttribute(
+							_user$project$Parser_Tokenizer$tokenize(' disabled ')))),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-						'parsedDashedAttribute',
+						'parseMultipleAttributes',
 						A2(
 							_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 							{
@@ -17116,134 +17178,145 @@ var _user$project$HtmlParser_HtmlParserRawAst$tests = A2(
 										_user$project$Parser_Parser$AstChildren(
 											{
 												ctor: '::',
-												_0: _user$project$Parser_Parser$UnlabelledAstNode(
-													_user$project$Parser_Parser$AstChildren(
-														{
-															ctor: '::',
-															_0: _user$project$Parser_Parser$UnlabelledAstNode(
-																_user$project$Parser_Parser$AstChildren(
-																	{
-																		ctor: '::',
-																		_0: _user$project$Parser_Parser$UnlabelledAstNode(
-																			_user$project$Parser_Parser$AstLeaf('data')),
-																		_1: {
-																			ctor: '::',
-																			_0: _user$project$Parser_Parser$UnlabelledAstNode(
-																				_user$project$Parser_Parser$AstLeaf('-')),
-																			_1: {
-																				ctor: '::',
-																				_0: _user$project$Parser_Parser$UnlabelledAstNode(
-																					_user$project$Parser_Parser$AstLeaf('name')),
-																				_1: {ctor: '[]'}
-																			}
-																		}
-																	})),
-															_1: {
+												_0: _user$project$HtmlParser_HtmlParserRawAst$attributeId1,
+												_1: {
+													ctor: '::',
+													_0: _user$project$HtmlParser_HtmlParserRawAst$attributeSuccessAwesome,
+													_1: {ctor: '[]'}
+												}
+											}))),
+								_1: {ctor: '[]'}
+							},
+							_user$project$HtmlParser_HtmlParserRawAst$parseTagAttributes(
+								_user$project$Parser_Tokenizer$tokenize(' id=\"1\" class=\"success awesome\" ')))),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
+							'parsedDashedAttribute',
+							A2(
+								_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
+								{
+									ctor: '_Tuple2',
+									_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(
+										_user$project$Parser_Parser$UnlabelledAstNode(
+											_user$project$Parser_Parser$AstChildren(
+												{
+													ctor: '::',
+													_0: _user$project$Parser_Parser$UnlabelledAstNode(
+														_user$project$Parser_Parser$AstChildren(
+															{
 																ctor: '::',
 																_0: _user$project$Parser_Parser$UnlabelledAstNode(
 																	_user$project$Parser_Parser$AstChildren(
 																		{
 																			ctor: '::',
 																			_0: _user$project$Parser_Parser$UnlabelledAstNode(
-																				_user$project$Parser_Parser$AstLeaf('elm')),
-																			_1: {ctor: '[]'}
+																				_user$project$Parser_Parser$AstLeaf('data')),
+																			_1: {
+																				ctor: '::',
+																				_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																					_user$project$Parser_Parser$AstLeaf('-')),
+																				_1: {
+																					ctor: '::',
+																					_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																						_user$project$Parser_Parser$AstLeaf('name')),
+																					_1: {ctor: '[]'}
+																				}
+																			}
 																		})),
-																_1: {ctor: '[]'}
-															}
-														})),
-												_1: {ctor: '[]'}
-											}))),
-								_1: {ctor: '[]'}
-							},
-							_user$project$HtmlParser_HtmlParserRawAst$parseTagAttributes(
-								_user$project$Parser_Tokenizer$tokenize(' data-name=\"elm\" ')))),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-							'parseClosingTag',
-							A2(
-								_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
-								{
-									ctor: '_Tuple2',
-									_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(_user$project$HtmlParser_HtmlParserRawAst$testClosingTagNode),
+																_1: {
+																	ctor: '::',
+																	_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																		_user$project$Parser_Parser$AstChildren(
+																			{
+																				ctor: '::',
+																				_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																					_user$project$Parser_Parser$AstLeaf('elm')),
+																				_1: {ctor: '[]'}
+																			})),
+																	_1: {ctor: '[]'}
+																}
+															})),
+													_1: {ctor: '[]'}
+												}))),
 									_1: {ctor: '[]'}
 								},
-								_user$project$HtmlParser_HtmlParserRawAst$parseClosingTag(
-									_user$project$Parser_Tokenizer$tokenize('</div>')))),
+								_user$project$HtmlParser_HtmlParserRawAst$parseTagAttributes(
+									_user$project$Parser_Tokenizer$tokenize(' data-name=\"elm\" ')))),
 						_1: {
 							ctor: '::',
 							_0: A2(
 								_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-								'parseOpeningTag no attributes',
+								'parseClosingTag',
 								A2(
 									_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 									{
 										ctor: '_Tuple2',
-										_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(
-											_user$project$Parser_Parser$LabelledAstNode(
-												{
-													label: 'OPENING_TAG',
-													value: _user$project$Parser_Parser$AstChildren(
-														{
-															ctor: '::',
-															_0: _user$project$Parser_Parser$UnlabelledAstNode(
-																_user$project$Parser_Parser$AstLeaf('div')),
-															_1: {
-																ctor: '::',
-																_0: _user$project$Parser_Parser$UnlabelledAstNode(
-																	_user$project$Parser_Parser$AstChildren(
-																		{ctor: '[]'})),
-																_1: {ctor: '[]'}
-															}
-														})
-												})),
+										_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(_user$project$HtmlParser_HtmlParserRawAst$testClosingTagNode),
 										_1: {ctor: '[]'}
 									},
-									_user$project$HtmlParser_HtmlParserRawAst$parseOpeningTag(
-										_user$project$Parser_Tokenizer$tokenize('<div >')))),
+									_user$project$HtmlParser_HtmlParserRawAst$parseClosingTag(
+										_user$project$Parser_Tokenizer$tokenize('</div>')))),
 							_1: {
 								ctor: '::',
 								_0: A2(
 									_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-									'parseOpeningTag one attribute',
+									'parseOpeningTag no attributes',
 									A2(
 										_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 										{
 											ctor: '_Tuple2',
-											_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(_user$project$HtmlParser_HtmlParserRawAst$testOpeningTagNode),
+											_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(
+												_user$project$Parser_Parser$LabelledAstNode(
+													{
+														label: 'OPENING_TAG',
+														value: _user$project$Parser_Parser$AstChildren(
+															{
+																ctor: '::',
+																_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																	_user$project$Parser_Parser$AstLeaf('div')),
+																_1: {
+																	ctor: '::',
+																	_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																		_user$project$Parser_Parser$AstChildren(
+																			{ctor: '[]'})),
+																	_1: {ctor: '[]'}
+																}
+															})
+													})),
 											_1: {ctor: '[]'}
 										},
 										_user$project$HtmlParser_HtmlParserRawAst$parseOpeningTag(
-											_user$project$Parser_Tokenizer$tokenize('<div id=\"1\" class=\"success awesome\">')))),
+											_user$project$Parser_Tokenizer$tokenize('<div >')))),
 								_1: {
 									ctor: '::',
 									_0: A2(
 										_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-										'parseSelfClosingTag',
+										'parseOpeningTag one attribute',
 										A2(
 											_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 											{
 												ctor: '_Tuple2',
-												_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(_user$project$HtmlParser_HtmlParserRawAst$testSelfClosingTagNode),
+												_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(_user$project$HtmlParser_HtmlParserRawAst$testOpeningTagNode),
 												_1: {ctor: '[]'}
 											},
-											_user$project$HtmlParser_HtmlParserRawAst$parseSelfClosingTag(
-												_user$project$Parser_Tokenizer$tokenize('<img id=\"1\" class=\"success awesome\" />')))),
+											_user$project$HtmlParser_HtmlParserRawAst$parseOpeningTag(
+												_user$project$Parser_Tokenizer$tokenize('<div id=\"1\" class=\"success awesome\">')))),
 									_1: {
 										ctor: '::',
 										_0: A2(
 											_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-											'parseTextNode',
+											'parseSelfClosingTag',
 											A2(
 												_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 												{
 													ctor: '_Tuple2',
-													_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(_user$project$HtmlParser_HtmlParserRawAst$testTextNode),
+													_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(_user$project$HtmlParser_HtmlParserRawAst$testSelfClosingTagNode),
 													_1: {ctor: '[]'}
 												},
-												_user$project$HtmlParser_HtmlParserRawAst$parseTextNode(
-													_user$project$Parser_Tokenizer$tokenize('one two')))),
+												_user$project$HtmlParser_HtmlParserRawAst$parseSelfClosingTag(
+													_user$project$Parser_Tokenizer$tokenize('<img id=\"1\" class=\"success awesome\" />')))),
 										_1: {
 											ctor: '::',
 											_0: A2(
@@ -17253,15 +17326,11 @@ var _user$project$HtmlParser_HtmlParserRawAst$tests = A2(
 													_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 													{
 														ctor: '_Tuple2',
-														_0: _user$project$Parser_Parser$ParseDoesNotMatch,
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: _user$project$Parser_Tokenizer$LeftAngleBracket, _1: '<'},
-															_1: {ctor: '[]'}
-														}
+														_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(_user$project$HtmlParser_HtmlParserRawAst$testTextNode),
+														_1: {ctor: '[]'}
 													},
 													_user$project$HtmlParser_HtmlParserRawAst$parseTextNode(
-														_user$project$Parser_Tokenizer$tokenize('<')))),
+														_user$project$Parser_Tokenizer$tokenize('one two')))),
 											_1: {
 												ctor: '::',
 												_0: A2(
@@ -17271,18 +17340,7 @@ var _user$project$HtmlParser_HtmlParserRawAst$tests = A2(
 														_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 														{
 															ctor: '_Tuple2',
-															_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(
-																_user$project$Parser_Parser$LabelledAstNode(
-																	{
-																		label: 'TEXT',
-																		value: _user$project$Parser_Parser$AstChildren(
-																			{
-																				ctor: '::',
-																				_0: _user$project$Parser_Parser$UnlabelledAstNode(
-																					_user$project$Parser_Parser$AstLeaf(' ')),
-																				_1: {ctor: '[]'}
-																			})
-																	})),
+															_0: _user$project$Parser_Parser$ParseDoesNotMatch,
 															_1: {
 																ctor: '::',
 																_0: {ctor: '_Tuple2', _0: _user$project$Parser_Tokenizer$LeftAngleBracket, _1: '<'},
@@ -17290,85 +17348,115 @@ var _user$project$HtmlParser_HtmlParserRawAst$tests = A2(
 															}
 														},
 														_user$project$HtmlParser_HtmlParserRawAst$parseTextNode(
-															{
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: _user$project$Parser_Tokenizer$Whitespace, _1: ' '},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: _user$project$Parser_Tokenizer$LeftAngleBracket, _1: '<'},
-																	_1: {ctor: '[]'}
-																}
-															}))),
+															_user$project$Parser_Tokenizer$tokenize('<')))),
 												_1: {
 													ctor: '::',
 													_0: A2(
 														_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-														'parseHtmlTokens',
+														'parseTextNode',
 														A2(
 															_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 															{
 																ctor: '_Tuple2',
 																_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(
-																	_user$project$Parser_Parser$UnlabelledAstNode(
-																		_user$project$Parser_Parser$AstChildren(
-																			{
-																				ctor: '::',
-																				_0: _user$project$HtmlParser_HtmlParserRawAst$testOpeningTagNode,
-																				_1: {
+																	_user$project$Parser_Parser$LabelledAstNode(
+																		{
+																			label: 'TEXT',
+																			value: _user$project$Parser_Parser$AstChildren(
+																				{
 																					ctor: '::',
-																					_0: _user$project$HtmlParser_HtmlParserRawAst$testTextNode,
+																					_0: _user$project$Parser_Parser$UnlabelledAstNode(
+																						_user$project$Parser_Parser$AstLeaf(' ')),
+																					_1: {ctor: '[]'}
+																				})
+																		})),
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: _user$project$Parser_Tokenizer$LeftAngleBracket, _1: '<'},
+																	_1: {ctor: '[]'}
+																}
+															},
+															_user$project$HtmlParser_HtmlParserRawAst$parseTextNode(
+																{
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: _user$project$Parser_Tokenizer$Whitespace, _1: ' '},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: _user$project$Parser_Tokenizer$LeftAngleBracket, _1: '<'},
+																		_1: {ctor: '[]'}
+																	}
+																}))),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
+															'parseHtmlTokens',
+															A2(
+																_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
+																{
+																	ctor: '_Tuple2',
+																	_0: _user$project$Parser_Parser$ParseMatchesReturnsResult(
+																		_user$project$Parser_Parser$UnlabelledAstNode(
+																			_user$project$Parser_Parser$AstChildren(
+																				{
+																					ctor: '::',
+																					_0: _user$project$HtmlParser_HtmlParserRawAst$testOpeningTagNode,
 																					_1: {
 																						ctor: '::',
-																						_0: _user$project$HtmlParser_HtmlParserRawAst$testClosingTagNode,
+																						_0: _user$project$HtmlParser_HtmlParserRawAst$testTextNode,
 																						_1: {
 																							ctor: '::',
 																							_0: _user$project$HtmlParser_HtmlParserRawAst$testClosingTagNode,
 																							_1: {
 																								ctor: '::',
-																								_0: _user$project$HtmlParser_HtmlParserRawAst$testTextNode,
+																								_0: _user$project$HtmlParser_HtmlParserRawAst$testClosingTagNode,
 																								_1: {
 																									ctor: '::',
-																									_0: _user$project$HtmlParser_HtmlParserRawAst$testOpeningTagNode,
-																									_1: {ctor: '[]'}
+																									_0: _user$project$HtmlParser_HtmlParserRawAst$testTextNode,
+																									_1: {
+																										ctor: '::',
+																										_0: _user$project$HtmlParser_HtmlParserRawAst$testOpeningTagNode,
+																										_1: {ctor: '[]'}
+																									}
 																								}
 																							}
 																						}
 																					}
-																				}
-																			}))),
-																_1: {ctor: '[]'}
-															},
-															_user$project$HtmlParser_HtmlParserRawAst$parseHtmlTokens(
-																_user$project$Parser_Tokenizer$tokenize(' <div id=\"1\" class=\"success awesome\" >one two</div></div>one two<div id=\"1\" class=\"success awesome\" > ')))),
-													_1: {
-														ctor: '::',
-														_0: A2(
-															_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-															'parseComment',
-															A2(
-																_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
-																{
-																	ctor: '_Tuple2',
-																	_0: _user$project$Parser_Parser$ParseMatchesReturnsNothing,
+																				}))),
 																	_1: {ctor: '[]'}
 																},
-																_user$project$HtmlParser_HtmlParserRawAst$parseComment(
-																	_user$project$Parser_Tokenizer$tokenize('<!--hello world-->')))),
+																_user$project$HtmlParser_HtmlParserRawAst$parseHtmlTokens(
+																	_user$project$Parser_Tokenizer$tokenize(' <div id=\"1\" class=\"success awesome\" >one two</div></div>one two<div id=\"1\" class=\"success awesome\" > ')))),
 														_1: {
 															ctor: '::',
 															_0: A2(
 																_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
-																'parse empty string',
+																'parseComment',
 																A2(
 																	_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
 																	{
 																		ctor: '_Tuple2',
-																		_0: _user$project$Parser_Parser$ParseDoesNotMatch,
+																		_0: _user$project$Parser_Parser$ParseMatchesReturnsNothing,
 																		_1: {ctor: '[]'}
 																	},
-																	_user$project$HtmlParser_HtmlParserRawAst$parseHtmlTokens(
-																		_user$project$Parser_Tokenizer$tokenize('')))),
-															_1: {ctor: '[]'}
+																	_user$project$HtmlParser_HtmlParserRawAst$parseComment(
+																		_user$project$Parser_Tokenizer$tokenize('<!--hello world-->')))),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_rtfeldman$legacy_elm_test$Legacy_ElmTest$test,
+																	'parse empty string',
+																	A2(
+																		_rtfeldman$legacy_elm_test$Legacy_ElmTest$assertEqual,
+																		{
+																			ctor: '_Tuple2',
+																			_0: _user$project$Parser_Parser$ParseDoesNotMatch,
+																			_1: {ctor: '[]'}
+																		},
+																		_user$project$HtmlParser_HtmlParserRawAst$parseHtmlTokens(
+																			_user$project$Parser_Tokenizer$tokenize('')))),
+																_1: {ctor: '[]'}
+															}
 														}
 													}
 												}
