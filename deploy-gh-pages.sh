@@ -4,7 +4,7 @@ git commit -m 'build'
 git checkout gh-pages
 git merge master
 cp -r website/. .
-git add -u .
+git add .
 git commit -m 'build'
-git push
+git push origin gh-pages
 git checkout master
