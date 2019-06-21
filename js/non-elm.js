@@ -40,23 +40,24 @@ elm.ports.elmDomReady.subscribe(function() {
     updateCodeMirrorSize();
   }, 0)
 
-  var copyButton = document.getElementById('copy-button')
-  var zc = new ZeroClipboard(copyButton);
-  zc.on( 'ready', function(event) {
-    zc.on( 'copy', function(event) {
-      event.clipboardData.setData('text/plain', globalCurrElmCode);
-      console.log('set zc', globalCurrElmCode);
-    } );
-  });
-
-  zc.on( 'error', function(event) {
-    // console.log( 'ZeroClipboard error of type "' + event.name + '": ' + event.message );
-    ZeroClipboard.destroy();
-  } );
 });
 
 
 elm.ports.currentSnippet.subscribe(function(currentSnippet) {
   console.log('curr snippet', currentSnippet);
   codeMirror.getDoc().setValue(currentSnippet);
+});
+
+elm.ports.copyCode.subscribe(function(){
+      var el = document.createElement('textarea');
+      el.value = globalCurrElmCode;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+
+      // copy from https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
 });

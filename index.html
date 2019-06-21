@@ -1,8 +1,5 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>HTML to Elm</title>
+  <!doctype html>
+
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic,700italic|Source+Code+Pro' rel='stylesheet' type='text/css'>
     <!-- <script src="js/highlight-js/highlight.pack.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/highlight.min.js"></script>
@@ -20,10 +17,84 @@
     <!-- <link rel="stylesheet" href="js/highlight-js/styles/tomorrow-night-eighties.css"> -->
     <link rel="stylesheet" href="css/main.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/tomorrow-night-eighties.min.css">
-    <script src="js/Main.js?v=2"></script>
-</head>
-<body>
-  <div id="main"></div>
-  <script src="js/non-elm.js?v=2"></script>
-</body>
-</html>
+    <!-- <script src="js/Main.js?v=2"></script> -->
+  <body>
+    <div></div>
+    <script src="elm.js"></script>
+    <script>var elm = Elm.Main.embed(document.querySelector("div"));
+
+function updateCodeMirrorSize() {
+  var leftPanelElement = document.getElementsByClassName("left-panel")[0];
+  var width = leftPanelElement.clientWidth;
+  var height = leftPanelElement.clientHeight - (30 * 2);
+  console.log('new cm height', height);
+  codeMirror.setSize(width, height)
+}
+
+    elm.ports.outgoingElmCode.subscribe(function(currElmCode) {
+  console.log("currElmCode:", currElmCode);
+  globalCurrElmCode = currElmCode;
+  var elmCodeElement = document.getElementById('elm-code');
+  elmCodeElement.innerHTML = currElmCode
+  hljs.highlightBlock(elmCodeElement);
+  updateCodeMirrorSize();
+});
+
+var codeMirror;
+
+elm.ports.elmDomReady.subscribe(function() {
+  var htmlInputElement = document.getElementById('html');
+  console.log(htmlInputElement);
+  codeMirror = CodeMirror.fromTextArea(htmlInputElement, {
+    mode: "htmlmixed",
+    theme: "3024-day"
+  });
+  codeMirror.focus();
+  codeMirror.on('change', function() {
+    var currentHtml = codeMirror.getValue();
+    console.log('currentHtml changed', currentHtml);
+    elm.ports.incomingHtmlCode.send(currentHtml);
+  });
+
+  setTimeout(function() {
+    updateCodeMirrorSize();
+  }, 0)
+
+  var copyButton = document.getElementById('copy-button')
+  var zc = new ZeroClipboard(copyButton);
+  zc.on( 'ready', function(event) {
+    zc.on( 'copy', function(event) {
+      event.clipboardData.setData('text/plain', globalCurrElmCode);
+      console.log('set zc', globalCurrElmCode);
+    } );
+  });
+
+  zc.on( 'error', function(event) {
+    // console.log( 'ZeroClipboard error of type "' + event.name + '": ' + event.message );
+    ZeroClipboard.destroy();
+  } );
+});
+
+
+elm.ports.currentSnippet.subscribe(function(currentSnippet) {
+  console.log('curr snippet', currentSnippet);
+  codeMirror.getDoc().setValue(currentSnippet);
+});
+
+elm.ports.copyCode.subscribe(function(){
+      var el = document.createElement('textarea');
+      el.value = globalCurrElmCode;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+
+      // copy from https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
+});
+
+
+</script>
+  </body>

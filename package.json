@@ -18,6 +18,8 @@
   "homepage": "https://github.com/mbylstra/elm-99-problems#readme",
   "dependencies": {
     "codemirror": "^5.8.0",
+    "elm": "^0.18.0",
+    "elm-live": "^2.7.5",
     "gulp-elm": "^0.2.0"
   }
 }
