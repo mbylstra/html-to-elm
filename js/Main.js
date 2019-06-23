@@ -19749,33 +19749,6 @@ var _user$project$Main$initialModel = {
 	currentSnippet: '',
 	windowSize: {width: 1000, height: 20}
 };
-var _user$project$Main$copyButton = function (visible) {
-	var style_ = visible ? {ctor: '[]'} : {
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'display', _1: 'none'},
-		_1: {ctor: '[]'}
-	};
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$id('copy-button'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(style_),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('copy-button'),
-					_1: {ctor: '[]'}
-				}
-			}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text('copy'),
-			_1: {ctor: '[]'}
-		});
-};
 var _user$project$Main$topBar = A2(
 	_elm_lang$html$Html$div,
 	{
@@ -19914,10 +19887,47 @@ var _user$project$Main$elmDomReady = _elm_lang$core$Native_Platform.outgoingPort
 	function (v) {
 		return v;
 	});
+var _user$project$Main$copyCode = _elm_lang$core$Native_Platform.outgoingPort(
+	'copyCode',
+	function (v) {
+		return null;
+	});
 var _user$project$Main$Model = F5(
 	function (a, b, c, d, e) {
 		return {html: a, elmCode: b, indentSpaces: c, currentSnippet: d, windowSize: e};
 	});
+var _user$project$Main$OnClickCopy = {ctor: 'OnClickCopy'};
+var _user$project$Main$copyButton = function (visible) {
+	var style_ = visible ? {ctor: '[]'} : {
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'display', _1: 'none'},
+		_1: {ctor: '[]'}
+	};
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$OnClickCopy),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$id('copy-button'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(style_),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('copy-button'),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('copy'),
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$Main$NoOp = {ctor: 'NoOp'};
 var _user$project$Main$ElmDomReady = {ctor: 'ElmDomReady'};
 var _user$project$Main$WindowSizeChanged = function (a) {
@@ -19994,11 +20004,18 @@ var _user$project$Main$update = F2(
 						_0: _user$project$Main$elmDomReady(''),
 						_1: {ctor: '[]'}
 					});
-			default:
+			case 'NoOp':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					model,
 					{ctor: '[]'});
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Main$copyCode(
+						{ctor: '_Tuple0'})
+				};
 		}
 	});
 var _user$project$Main$subscriptions = function (model) {
