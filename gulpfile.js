@@ -3,6 +3,7 @@ var elm  = require('gulp-elm');
 
 gulp.task('elm-init', elm.init);
 
+//starting od method
 gulp.task('elm', ['elm-init'], function(){
   return gulp.src('elm-src/HtmlToElmWebsite/Main.elm')
     .pipe(elm())
